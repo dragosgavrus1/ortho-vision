@@ -1,4 +1,4 @@
-# Otho-Vision
+# Ortho-Vision
 
 ### Optimal Plan for Peril-Implants
 Team-based project:

@@ -25,13 +25,15 @@ def hello_world():  # put application's code here
 @app.route('/signup', methods=['POST'])
 def signup():
     request_data = request.get_json()
-    hashed_password = bcrypt.generate_password_hash(request_data["password"]).decode('utf-8')
-    response = supabase.auth.sign_up(
-       {
-        "email": request_data['email'],
-        "password": hashed_password,
-        }
-    )
+    try:
+        response = supabase.auth.sign_up(
+        {
+            "email": request_data['email'],
+            "password": request_data['password'],
+            }
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
     return response.json(), 200
 
@@ -46,6 +48,22 @@ def signin_with_google():
         }
     )
     return res.json(), 200
+
+@app.route('/signin', methods=['POST'])
+def signin():
+    request_data = request.get_json()
+    
+    try:
+        response = supabase.auth.sign_in_with_password(
+            {
+                "email": request_data['email'],
+                "password": request_data['password'],
+            }
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    return response.json(), 200
+
 
 if __name__ == '__main__':
     app.run()

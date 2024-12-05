@@ -1,17 +1,20 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify, request
+from flask_bcrypt import Bcrypt
 from supabase import create_client, Client
-from datetime import datetime, date
+
+load_dotenv()
 
 app = Flask(__name__)
 
-load_dotenv()
+bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 supabase_url: str = os.getenv("SUPABASE_URL", "")
 supabase_key: str = os.getenv("SUPABASE_KEY", "")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 supabase: Client = create_client(supabase_url, supabase_key)
 
@@ -19,19 +22,30 @@ supabase: Client = create_client(supabase_url, supabase_key)
 def hello_world():  # put application's code here
     return 'Hello World!'
 
-@app.route('/users/signup', methods=['POST'])
-def signUp():
-    data = supabase.table('Users').insert({
-        'first_name': 'John',
-        'last_name': 'Baston',
-        'email': 'johnbaston@gmail.com',
-        'password': 'johnbaston232#',
-        'role': 'doctor'
-    }).execute()
-    
-    assert len(data.data) > 0
-    return jsonify(data.data)
+@app.route('/signup', methods=['POST'])
+def signup():
+    request_data = request.get_json()
+    hashed_password = bcrypt.generate_password_hash(request_data["password"]).decode('utf-8')
+    response = supabase.auth.sign_up(
+       {
+        "email": request_data['email'],
+        "password": hashed_password,
+        }
+    )
 
+    return response.json(), 200
+
+@app.route('/signin/google', methods=['POST'])
+def signin_with_google():
+    res = supabase.auth.sign_in_with_oauth(
+        {
+            "provider": "google",
+            "options": {
+                "redirect_to": "https://ascqlpmgjkfwtpawkkjy.supabase.co/auth/v1/callback",
+            }
+        }
+    )
+    return res.json(), 200
 
 if __name__ == '__main__':
     app.run()

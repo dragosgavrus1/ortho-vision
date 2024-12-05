@@ -1,0 +1,82 @@
+/* src/components/Navbar.css */
+
+/* Header Styling */
+.navbar {
+	padding-left: 1rem;
+	padding-right: 1.5rem;
+	height: 3.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* Ensure space between elements */
+	background-color: white;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.dark {
+	background-color: #2d2d2d; /* Dark mode background */
+}
+
+/* Navbar Branding */
+.navbar-brand {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.navbar-brand span {
+	margin-left: 0.5rem;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #2a2a2a;
+}
+
+.navbar-brand .dark span {
+	color: #ffffff;
+}
+
+/* Navbar Links */
+.navbar-links {
+	display: flex;
+	justify-content: center;
+	gap: 1.5rem;
+	font-size: 1rem;
+	flex-grow: 1; /* Allow this section to take up available space */
+}
+
+.navbar-links a {
+	text-sm: 0.875rem;
+	font-weight: 500;
+	color: #4b4b4b;
+	transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+	color: #1e60a2;
+}
+
+/* Button Styling */
+.navbar-button {
+	margin-left: auto; /* To push the button to the right */
+	margin-right: auto; /* Center the button by applying equal margins */
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	border: 1px solid #1e60a2;
+	color: #1e60a2;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	transition: background-color 0.3s;
+}
+
+.navbar-button:hover {
+	background-color: rgba(30, 96, 162, 0.1);
+}
+
+.navbar-button .dark {
+	color: #4bb5e5;
+	border-color: #4bb5e5;
+}
+
+.navbar-button:hover .dark {
+	background-color: #333333;
+}

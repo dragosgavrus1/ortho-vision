@@ -9,8 +9,15 @@ import {
   UserIcon,
   Zap,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleSignInClick = () => {
+    navigate("/signin");
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       <header className="px-4 lg:px-6 h-14 flex items-center bg-white dark:bg-gray-800 shadow-sm">
@@ -44,7 +51,8 @@ const HomePage = () => {
             Contact
           </a>
         </nav>
-        <Button variant="outline" className="ml-auto flex items-center gap-2 text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-gray-700">
+        <Button variant="outline" className="ml-auto flex items-center gap-2 text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-gray-700"
+        onClick={handleSignInClick}>
           <UserIcon className="h-5 w-5" />
           Sign In
         </Button>

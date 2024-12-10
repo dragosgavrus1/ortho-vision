@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Codes\ortho-vision\app\backend\venv
+set VIRTUAL_ENV=C:\Users\marcl\OneDrive\Documents\GitHub\ortho-vision\app\backend\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

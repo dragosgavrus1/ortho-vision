@@ -25,7 +25,13 @@ app.register_blueprint(auth_blueprint)
 @app.route('/')
 def hello_world():
     return 'Hello World!'
-    
+
+@app.route('/test')
+def test_route():
+    return jsonify({
+        "SUPABASE_URL": app.config['SUPABASE_URL'],
+        "SUPABASE_KEY": app.config['SUPABASE_KEY']
+    })
 
 @app.route('/upload', methods=['POST'])
 def upload_image():

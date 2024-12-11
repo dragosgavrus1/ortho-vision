@@ -10,7 +10,8 @@ auth_blueprint = Blueprint('auth', __name__)
 def get_supabase_client():
     url = current_app.config["SUPABASE_URL"]
     key = current_app.config["SUPABASE_KEY"]
-    return create_client(url, key)
+    supabase: Client = create_client(url, key)
+    return supabase
 
 @auth_blueprint.route('/signup', methods=['POST'])
 def signup():

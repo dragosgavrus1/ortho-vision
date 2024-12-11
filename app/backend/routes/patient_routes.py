@@ -17,13 +17,12 @@ def create_patient():
 
     first_name = request_data.get('first_name')
     last_name = request_data.get('last_name')
-    dob = request_data.get('dob')
+    dob = request_data.get('date_of_birth')
     gender = request_data.get('gender')
-    contact_number = request_data.get('contact_number')
     email = request_data.get('email')
     user_id = request_data.get('user_id')
 
-    if not first_name or not last_name or not dob or not gender or not contact_number or not email or not user_id:
+    if not first_name or not last_name or not dob or not gender or not email or not user_id:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
@@ -31,9 +30,8 @@ def create_patient():
         response = supabase.table('Patients').insert({
             "first_name": first_name,
             "last_name": last_name,
-            "dob": dob,
+            "date_of_birth": dob,
             "gender": gender,
-            "contact_number": contact_number,
             "email": email,
             "user_id": user_id,
         }).execute()

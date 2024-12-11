@@ -168,7 +168,7 @@ def upload_image():
                 
                 # Draw class label above the bounding box
                 label_text = f"{label}"
-                (text_width, text_height), _ = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+                (text_width, text_height), _ = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
                 cv2.rectangle(annotated_image, (x1, y1 - text_height - 2), (x1 + text_width, y1), color, -1)
                 cv2.putText(annotated_image, label_text, (x1, y1 - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 

@@ -41,7 +41,7 @@ const HomePage = () => {
           <div className="container mx-auto px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_800px]">
               <div className="max-w-full">
-                <div className="border border-gray-200 shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105">
+                <div className="border  border-gray-200 shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105">
                   <img
                     src="https://media.istockphoto.com/id/171294275/photo/panoramic-dental-x-ray.jpg?s=612x612&w=0&k=20&c=cKxtL1W0L2LKVoZnNfiUj8umm6kQDonINuhn8NdCda4="
                     alt="Dental X-ray with AI analysis"

@@ -3,7 +3,13 @@
 import { Button } from "@/components/Button/Button";
 import { Layout } from "@/components/Layout";
 import isTokenValid from "@/hooks/tokenValid";
-import { HistoryIcon, InfoIcon, Upload, User2Icon } from "lucide-react";
+import {
+  HistoryIcon,
+  InfoIcon,
+  LayoutDashboardIcon,
+  Upload,
+  User2Icon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 interface PatientDetails {
@@ -44,6 +50,11 @@ export default function PatientDetailsPage() {
     setIsChecked(event.target.checked); // Update the state on change
   };
   const patientDetailsLinks = [
+    {
+      href: "/patients",
+      icon: LayoutDashboardIcon,
+      label: "Overview",
+    },
     {
       href: `/patients/${id}`,
       icon: InfoIcon,

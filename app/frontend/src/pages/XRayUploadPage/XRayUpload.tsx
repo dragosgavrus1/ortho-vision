@@ -1,61 +1,47 @@
-"use client";
-
 import { Button } from "@/components/Button/Button";
 import { Layout } from "@/components/Layout";
+import isTokenValid from "@/hooks/tokenValid";
 import {
-    Contact2,
-    HistoryIcon,
-    InfoIcon,
-    RotateCw,
-    Upload,
-    User2Icon,
-    ZoomIn,
-    ZoomOut,
+  HistoryIcon,
+  InfoIcon,
+  LayoutDashboardIcon,
+  Upload,
+  User2Icon,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-interface AnalysisResult {
-  date: string;
-  overview: string;
-  severity: "normal" | "minor" | "critical";
-}
 
 export default function AnalysisPage() {
   const navigate = useNavigate();
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [analysisImage, setAnalysisImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(
+    "https://media.istockphoto.com/id/171294275/photo/panoramic-dental-x-ray.jpg?s=612x612&w=0&k=20&c=cKxtL1W0L2LKVoZnNfiUj8umm6kQDonINuhn8NdCda4="
+  );
+  const [analysisImage, setAnalysisImage] = useState<string | null>(
+    "https://media.istockphoto.com/id/171294275/photo/panoramic-dental-x-ray.jpg?s=612x612&w=0&k=20&c=cKxtL1W0L2LKVoZnNfiUj8umm6kQDonINuhn8NdCda4="
+  );
+  const [zoomScales, setZoomScales] = useState({ original: 1, analysis: 1 });
+  const [selectedImage, setSelectedImage] = useState<"original" | "analysis">(
+    "original"
+  );
+  const [position, setPosition] = useState({ x: 0, y: 0 }); // To track image position for movement
   const { id } = useParams();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const patientDetailsLinks = [
-    {
-      href: `/patients/${id}`,
-      icon: InfoIcon,
-      label: "Patient Information",
-    },
+    { href: "/patients", icon: LayoutDashboardIcon, label: "Overview" },
+    { href: `/patients/${id}`, icon: InfoIcon, label: "Patient Information" },
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
     { href: "/history", icon: HistoryIcon, label: "History" },
   ];
-  const [results] = useState<AnalysisResult[]>([
-    {
-      date: "2023-10-01",
-      overview: "No issues detected",
-      severity: "normal",
-    },
-    {
-      date: "2023-10-15",
-      overview: "Follow-up recommended",
-      severity: "minor",
-    },
-    {
-      date: "2023-10-30",
-      overview: "Immediate attention required",
-      severity: "critical",
-    },
-  ]);
 
-  // Create a reference for the hidden file input element
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (!isTokenValid(token)) {
+      navigate("/signin");
+    }
+  }, [navigate]);
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -64,8 +50,6 @@ export default function AnalysisPage() {
       const reader = new FileReader();
       reader.onloadend = async () => {
         setUploadedImage(reader.result as string);
-
-        // Simulate sending the image to the server and getting the analysis result.
         await sendToServer();
       };
       reader.readAsDataURL(file);
@@ -73,137 +57,155 @@ export default function AnalysisPage() {
   };
 
   const sendToServer = async () => {
-    // Simulate sending the image to the server and getting a result
-    console.log("Sending image to the server...");
-
-    // Simulating server delay and response with a placeholder image
     setTimeout(() => {
-      console.log("Server responded with analysis image...");
-      setAnalysisImage("/placeholder.svg?height=400&width=400"); // Placeholder
-    }, 2000); // Simulated delay (2 seconds)
+      setAnalysisImage("/placeholder.svg?height=400&width=400");
+    }, 2000);
   };
 
-  const getSeverityColor = (severity: AnalysisResult["severity"]) => {
-    switch (severity) {
-      case "normal":
-        return "text-green-600";
-      case "minor":
-        return "text-yellow-600";
-      case "critical":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
+  const triggerFileInput = () => fileInputRef.current?.click();
+
+  const handleZoomIn = () => {
+    setZoomScales((prev) => ({
+      ...prev,
+      [selectedImage]: Math.min(prev[selectedImage] + 0.1, 3), // Max zoom is 3
+    }));
   };
 
-  // Trigger file input click when the button is clicked
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const handleZoomOut = () => {
+    setZoomScales((prev) => ({
+      ...prev,
+      [selectedImage]: Math.max(prev[selectedImage] - 0.1, 0.5), // Min zoom is 0.5
+    }));
+  };
+
+  const handleImageSelection = (image: "original" | "analysis") => {
+    setSelectedImage(image);
+  };
+
+  // Handle mouse drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const startX = e.clientX - position.x;
+    const startY = e.clientY - position.y;
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      setPosition({
+        x: moveEvent.clientX - startX,
+        y: moveEvent.clientY - startY,
+      });
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
   };
 
   return (
     <Layout activePath={`/add-xray/${id}`} links={patientDetailsLinks}>
       <div className="fixed mr-4 top-4 right-4 z-50">
         <button
-          className="h-12 w-12  rounded-full bg-gray-500 text-white shadow-lg hover:bg-blue-600"
+          className="h-12 w-12 rounded-full bg-gray-500 text-white shadow-lg hover:bg-blue-600"
           onClick={() => navigate("/profile")}
         >
           <User2Icon className="h-6 w-6 m-auto" />
         </button>
       </div>
+
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-bold">Analysis Results</h1>
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Original X-Ray</h2>
-              <button onClick={triggerFileInput}>
-                <Button variant="outline" size="sm">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Image
-                </Button>
-              </button>
-            </div>
-            <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
-              {uploadedImage ? (
+            <h2 className="text-lg font-semibold">Original X-Ray</h2>
+            <div
+              className={`border-2 ${
+                selectedImage === "original"
+                  ? "border-blue-500"
+                  : "border-transparent"
+              }`}
+              onClick={() => handleImageSelection("original")}
+            >
+              <div
+                className="image-container"
+                style={{ overflow: "hidden" }}
+                onMouseDown={handleMouseDown}
+              >
                 <img
-                  src={uploadedImage}
+                  src={uploadedImage ?? "/default-placeholder-original.jpg"}
                   alt="Original X-Ray"
-                  className="w-full h-full object-contain"
+                  style={{
+                    transform: `scale(${zoomScales.original}) translate(${position.x}px, ${position.y}px)`, // Apply zoom scale and movement
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                  }}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  No image uploaded
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Analysis Result</h2>
-            <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
-              {analysisImage ? (
+            <div
+              className={`border-2 ${
+                selectedImage === "analysis"
+                  ? "border-blue-500"
+                  : "border-transparent"
+              }`}
+              onClick={() => handleImageSelection("analysis")}
+            >
+              <div
+                className="image-container"
+                style={{ overflow: "hidden" }}
+                onMouseDown={handleMouseDown}
+              >
                 <img
-                  src={analysisImage}
+                  src={analysisImage ?? "/default-placeholder-analysis.jpg"}
                   alt="Analysis Result"
-                  className="w-full h-full object-contain"
+                  style={{
+                    transform: `scale(${zoomScales.analysis}) translate(${position.x}px, ${position.y}px)`, // Apply zoom scale and movement
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                  }}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  No analysis available
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-center gap-2">
-          <Button variant="outline" size="sm">
+        {/* Zoom Controls */}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" size="sm" onClick={handleZoomIn}>
             <ZoomIn className="h-4 w-4 mr-2" />
             Zoom In
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleZoomOut}>
             <ZoomOut className="h-4 w-4 mr-2" />
             Zoom Out
           </Button>
-          <Button variant="outline" size="sm">
-            <RotateCw className="h-4 w-4 mr-2" />
-            Rotate
-          </Button>
-          <Button variant="outline" size="sm">
-            <Contact2 className="h-4 w-4 mr-2" />
-            Contrast
+        </div>
+        {/* Upload Button */}
+        <div className="text-center">
+          <Button onClick={triggerFileInput} variant="outline" size="sm">
+            <Upload className="h-4 w-4 mr-2" />
+            Upload Image
           </Button>
         </div>
-
-        <div className="rounded-lg border bg-white overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="px-4 py-2 text-left">Analysis Date</th>
-                <th className="px-4 py-2 text-left">Results Overview</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {results.map((result, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2">{result.date}</td>
-                  <td
-                    className={`px-4 py-2 ${getSeverityColor(result.severity)}`}
-                  >
-                    {result.overview}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Results Table */}
+        <div className="text-center">
+          <Button
+            onClick={() => navigate(`/analysis-details/${id}`)}
+            variant="outline"
+            size="sm"
+          >
+            View Detailed Results
+          </Button>
         </div>
       </div>
 
-      {/* Hidden file input */}
+      {/* Hidden File Input */}
       <input
         type="file"
         ref={fileInputRef}

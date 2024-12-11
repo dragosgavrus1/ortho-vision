@@ -79,3 +79,21 @@
 .navbar-button:hover .dark {
   background-color: #333333;
 }
+
+.confirmation-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 9999; /* Ensure it's above other elements */
+}
+
+.confirmation-dialog-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10000; /* Ensure the dialog content itself is above everything */
+}

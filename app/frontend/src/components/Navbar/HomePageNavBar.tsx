@@ -74,8 +74,8 @@ const HomePageNavbar: React.FC<NavbarProps> = ({
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 shadow-md">
+        <div className="confirmation-dialog-overlay">
+          <div className="confirmation-dialog-content">
             <h2 className="text-lg font-semibold">Confirm Logout</h2>
             <p className="mt-2 text-gray-600">
               Are you sure you want to log out?
@@ -83,7 +83,7 @@ const HomePageNavbar: React.FC<NavbarProps> = ({
             <div className="mt-4 flex justify-end gap-2">
               <Button
                 variant="outline"
-                onClick={() => setShowConfirmDialog(false)} // Close dialog
+                onClick={() => setShowConfirmDialog(false)}
               >
                 Cancel
               </Button>
@@ -91,7 +91,7 @@ const HomePageNavbar: React.FC<NavbarProps> = ({
                 variant="default"
                 onClick={() => {
                   handleLogout();
-                  setShowConfirmDialog(false); // Close dialog after logout
+                  setShowConfirmDialog(false);
                 }}
               >
                 Log Out

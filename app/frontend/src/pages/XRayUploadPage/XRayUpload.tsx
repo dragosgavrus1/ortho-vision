@@ -26,6 +26,7 @@ export default function AnalysisPage() {
     "original"
   );
   const [position, setPosition] = useState({ x: 0, y: 0 }); // To track image position for movement
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -57,17 +58,21 @@ export default function AnalysisPage() {
     }
   };
 
-  const sendToServer = async (file:File) => {
+  const sendToServer = async (file: File) => {
+    setIsLoading(true); // Start loading
     const formData = new FormData();
     formData.append("file", file);
-    try{
-      const response = await fetch("https://ortho-vision-backend.onrender.com/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`
-        },
-        body: formData,
-      });
+    try {
+      const response = await fetch(
+        "https://ortho-vision-backend.onrender.com/upload",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const imageBlob = await response.blob();
@@ -76,8 +81,10 @@ export default function AnalysisPage() {
       } else {
         console.error("Failed to upload image");
       }
-    }catch(error){
+    } catch (error) {
       console.error("Failed to upload image", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -172,14 +179,19 @@ export default function AnalysisPage() {
                 selectedImage === "analysis"
                   ? "border-blue-500"
                   : "border-transparent"
-              }`}
+              } relative`}
               onClick={() => handleImageSelection("analysis")}
             >
               <div
-                className="image-container"
+                className="image-container relative"
                 style={{ overflow: "hidden" }}
                 onMouseDown={handleMouseDown}
               >
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+                  </div>
+                )}
                 <img
                   src={analysisImage ?? "/default-placeholder-analysis.jpg"}
                   alt="Analysis Result"

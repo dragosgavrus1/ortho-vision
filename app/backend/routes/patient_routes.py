@@ -4,7 +4,7 @@ from supabase import create_client, Client
 
 patient_blueprint = Blueprint('patient', __name__)
 
-supabase: Client = create_client(current_app.config["SUPABASE_URL"], current_app.config["SUPABASE_KEY"])
+supabase = current_app.supabase
 
 # CRUD API to create a new patient
 @patient_blueprint.route('/patients', methods=['POST'])

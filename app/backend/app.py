@@ -17,6 +17,10 @@ CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.vercel.app"]}})
 # Load secret keys from environment variables
 app.config.from_object(Config)
 
+# Initialize Supabase client
+supabase: Client = create_client(app.config["SUPABASE_URL"], app.config["SUPABASE_KEY"])
+app.supabase = supabase
+
 # Import blueprints
 app.register_blueprint(patient_bp)
 app.register_blueprint(auth_bp)

@@ -6,7 +6,7 @@ import jwt
 
 auth_blueprint = Blueprint('auth', __name__)
 
-supabase: Client = create_client(current_app.config["SUPABASE_URL"], current_app.config["SUPABASE_KEY"])
+supabase = current_app.supabase
 
 @auth_blueprint.route('/signup', methods=['POST'])
 def signup():

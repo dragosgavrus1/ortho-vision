@@ -1,11 +1,10 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, app, request, jsonify, current_app
 from supabase import create_client, Client
 
 
 patient_blueprint = Blueprint('patient', __name__)
 
-supabase = current_app.supabase
-
+supabase: Client = create_client(app.config["SUPABASE_URL"], app.config["SUPABASE_KEY"])
 # CRUD API to create a new patient
 @patient_blueprint.route('/patients', methods=['POST'])
 def create_patient():

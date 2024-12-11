@@ -147,7 +147,12 @@ def upload_image():
 
     results = model(image_np)
 
-    for bbox in results.xyxy[0]:
+    if isinstance(results, list):
+        bboxes = results[0].xyxy[0]  
+    else:
+        bboxes = results.xyxy[0]
+
+    for bbox in bboxes:
         x, y, w, h, conf, cls = bbox
         x1, y1 = int(x - w / 2), int(y - h / 2)
         x2, y2 = int(x + w / 2), int(y + h / 2)

@@ -63,6 +63,10 @@ export default function AnalysisPage() {
     try{
       const response = await fetch("https://ortho-vision-backend.onrender.com/upload", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          'Content-Type': 'multipart/form-data'
+        },
         body: formData,
       });
 

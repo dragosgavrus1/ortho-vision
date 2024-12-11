@@ -7,8 +7,8 @@ import cv2
 from ultralytics import YOLO
 
 from config import Config
-from routes.patient_routes import patient_bp
-from routes.auth_routes import auth_bp
+from routes.patient_routes import patient_blueprint
+from routes.auth_routes import auth_blueprint
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -17,13 +17,9 @@ CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.vercel.app"]}})
 # Load secret keys from environment variables
 app.config.from_object(Config)
 
-# Initialize Supabase client
-supabase: Client = create_client(app.config["SUPABASE_URL"], app.config["SUPABASE_KEY"])
-app.supabase = supabase
-
 # Import blueprints
-app.register_blueprint(patient_bp)
-app.register_blueprint(auth_bp)
+app.register_blueprint(patient_blueprint)
+app.register_blueprint(auth_blueprint)
 
 
 @app.route('/')

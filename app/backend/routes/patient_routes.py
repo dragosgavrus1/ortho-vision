@@ -1,10 +1,15 @@
-from flask import Blueprint, app, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app
 from supabase import create_client, Client
 
 
 patient_blueprint = Blueprint('patient', __name__)
 
-supabase: Client = create_client(app.config["SUPABASE_URL"], app.config["SUPABASE_KEY"])
+# Function to get Supabase client
+def get_supabase_client():
+    url = current_app.config["SUPABASE_URL"]
+    key = current_app.config["SUPABASE_KEY"]
+    return create_client(url, key)
+
 # CRUD API to create a new patient
 @patient_blueprint.route('/patients', methods=['POST'])
 def create_patient():
@@ -22,6 +27,7 @@ def create_patient():
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
+        supabase = get_supabase_client()
         response = supabase.table('Patients').insert({
             "first_name": first_name,
             "last_name": last_name,
@@ -51,6 +57,7 @@ def get_patients():
 
     try:
         #TODO: Fetch patients by user_id; Now all are fetched
+        supabase = get_supabase_client()
         response = supabase.table('Patients').select('*').execute()
 
         if response.status_code == 200:
@@ -66,6 +73,7 @@ def get_patients():
 @patient_blueprint.route('/patients/<int:patient_id>', methods=['GET'])
 def get_patient(patient_id):
     try:
+        supabase = get_supabase_client()
         response = supabase.table('Patients').select('*').eq('patient_id', patient_id).single().execute()
 
         if response.status_code == 200:
@@ -93,6 +101,7 @@ def update_patient(patient_id):
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
+        supabase = get_supabase_client()
         response = supabase.table('Patients').update({
             "first_name": first_name,
             "last_name": last_name,
@@ -116,6 +125,7 @@ def update_patient(patient_id):
 def delete_patient(patient_id):
     try:
         # Delete the patient record by patient_id
+        supabase = get_supabase_client()
         response = supabase.table('Patients').delete().eq('patient_id', patient_id).execute()
 
         if response.status_code == 200:

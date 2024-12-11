@@ -1,4 +1,4 @@
-from flask import Blueprint, app, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app
 from supabase import create_client, Client
 import datetime
 import jwt
@@ -6,7 +6,11 @@ import jwt
 
 auth_blueprint = Blueprint('auth', __name__)
 
-supabase: Client = create_client(app.config["SUPABASE_URL"], app.config["SUPABASE_KEY"])
+# Function to get Supabase client
+def get_supabase_client():
+    url = current_app.config["SUPABASE_URL"]
+    key = current_app.config["SUPABASE_KEY"]
+    return create_client(url, key)
 
 @auth_blueprint.route('/signup', methods=['POST'])
 def signup():
@@ -22,6 +26,7 @@ def signup():
 
     try:
         # Call Supabase API to sign up the user
+        supabase = get_supabase_client()
         response = supabase.auth.sign_up({
             "email": email,
             "password": password,
@@ -68,6 +73,7 @@ def signin():
 
     try:
         # Call Supabase API to sign in the user
+        supabase = get_supabase_client()
         response = supabase.auth.sign_in_with_password({
             "email": email,
             "password": password,
@@ -102,6 +108,7 @@ def signin():
 def logout():
     try:
         # Supabase provides a `sign_out()` function to revoke the current session
+        supabase = get_supabase_client()
         supabase.auth.sign_out()
         
         return jsonify({"message": "User successfully logged out."}), 200

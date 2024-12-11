@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request, send_file
 import jwt
 from supabase import create_client, Client
 from flask_cors import CORS
+from io import BytesIO
 import numpy as np
 import cv2
 from ultralytics import YOLO

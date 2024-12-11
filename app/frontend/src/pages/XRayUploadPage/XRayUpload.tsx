@@ -61,7 +61,7 @@ export default function AnalysisPage() {
     const formData = new FormData();
     formData.append("file", file);
     try{
-      const response = await fetch("https://ortho-vision-backend.onrender.com//upload", {
+      const response = await fetch("https://ortho-vision-backend.onrender.com/upload", {
         method: "POST",
         body: formData,
       });

@@ -134,6 +134,11 @@ def logout():
 @app.route('/upload', methods=['POST'])
 def upload_image():
     model = YOLO('models/best.pt')
+    class_names = ['IMP', 'PRR', 'OBT', 'END', 'CAR', 'BON', 'IMT', 'API', 'ROT', 'FUR', 'APS', 'ROR', 'ORD', 'SRD']
+    num_classes = len(class_names)
+
+    color_map = {i: tuple(np.random.randint(0, 255, 3).tolist()) for i in range(num_classes)}
+
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
     
@@ -152,11 +157,20 @@ def upload_image():
         # Get bounding boxes and draw them on the image
         annotated_image = decoded_image.copy()
         for result in results:
-            bboxes = result.boxes.xyxy  # Get bounding boxes (x1, y1, x2, y2)
-            for bbox in bboxes:
+            for bbox, cls in zip(result.boxes.xyxy, result.boxes.cls):  # Get bounding boxes and classes
                 x1, y1, x2, y2 = map(int, bbox)
-                # Draw bounding box (you can customize color and thickness)
-                cv2.rectangle(annotated_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                class_id = int(cls)
+                color = color_map[class_id]  # Get color for this class
+                label = class_names[class_id]  # Get class name
+                
+                # Draw bounding box
+                cv2.rectangle(annotated_image, (x1, y1), (x2, y2), color, 2)
+                
+                # Draw class label above the bounding box
+                label_text = f"{label}"
+                (text_width, text_height), _ = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                cv2.rectangle(annotated_image, (x1, y1 - text_height - 2), (x1 + text_width, y1), color, -1)
+                cv2.putText(annotated_image, label_text, (x1, y1 - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         # Convert the annotated image to JPEG and send it as a response
         _, img_encoded = cv2.imencode('.jpg', annotated_image)

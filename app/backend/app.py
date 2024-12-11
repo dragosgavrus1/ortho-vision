@@ -16,7 +16,7 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.vercel.app"]}})
 
 # Fetch Supabase credentials from environment variables
 supabase_url: str = os.getenv("SUPABASE_URL", "")

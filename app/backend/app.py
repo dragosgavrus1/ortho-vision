@@ -141,31 +141,36 @@ def upload_image():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
     
-    image = Image.open(file.stream)
+    try:
+        # Read image from the request
+        image = np.frombuffer(file.read(), np.uint8)
+        decoded_image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    image_np = np.array(image)
+        # Perform inference
+        results = model(decoded_image)
 
-    results = model(image_np)
+        # Get bounding boxes and draw them on the image
+        annotated_image = decoded_image.copy()
+        for result in results:
+            bboxes = result.boxes.xyxy  # Get bounding boxes (x1, y1, x2, y2)
+            for bbox in bboxes:
+                x1, y1, x2, y2 = map(int, bbox)
+                # Draw bounding box (you can customize color and thickness)
+                cv2.rectangle(annotated_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-    if isinstance(results, list):
-        bboxes = results[0].xyxy[0]  
-    else:
-        bboxes = results.xyxy[0]
+        # Convert the annotated image to JPEG and send it as a response
+        _, img_encoded = cv2.imencode('.jpg', annotated_image)
+        img_bytes = img_encoded.tobytes()
 
-    for bbox in bboxes:
-        x, y, w, h, conf, cls = bbox
-        x1, y1 = int(x - w / 2), int(y - h / 2)
-        x2, y2 = int(x + w / 2), int(y + h / 2)
+        return send_file(
+            BytesIO(img_bytes),
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name='annotated_image.jpg'
+        )
 
-        cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    
-    image_with_bounding_boxes = Image.fromarray(image_np)
-
-    image_io = BytesIO()
-    image_with_bounding_boxes.save(image_io, format='PNG')
-    image_io.seek(0)
-
-    return send_file(image_io, mimetype='image/png')
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port="3000")

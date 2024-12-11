@@ -131,7 +131,7 @@ def logout():
         return jsonify({"error": str(e)}), 400
     
 
-@app.route('/upload', methods=['GET'])
+@app.route('/upload', methods=['POST'])
 def upload_image():
     model = YOLO('models/best.pt')
     if 'file' not in request.files:

@@ -1,10 +1,14 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import jwt
 from supabase import create_client, Client
 from flask_cors import CORS
+import numpy as np
+import cv2
+from ultralytics import YOLO
+from PIL import Image
 
 # Load environment variables
 load_dotenv()
@@ -124,6 +128,38 @@ def logout():
         return jsonify({"message": "User successfully logged out."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+
+@app.route('/upload', methods=['GET'])
+def upload_image():
+    model = YOLO('models/best.pt')
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    
+    image = Image.open(file.stream)
+
+    image_np = np.array(image)
+
+    results = model(image_np)
+
+    for bbox in results.xyxy[0]:
+        x, y, w, h, conf, cls = bbox
+        x1, y1 = int(x - w / 2), int(y - h / 2)
+        x2, y2 = int(x + w / 2), int(y + h / 2)
+
+        cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    
+    image_with_bounding_boxes = Image.fromarray(image_np)
+
+    image_io = BytesIO()
+    image_with_bounding_boxes.save(image_io, format='PNG')
+    image_io.seek(0)
+
+    return send_file(image_io, mimetype='image/png')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, port="3000")

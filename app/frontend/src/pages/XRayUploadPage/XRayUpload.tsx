@@ -42,6 +42,7 @@ export default function AnalysisPage() {
       navigate("/signin");
     }
   }, [navigate]);
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -50,16 +51,31 @@ export default function AnalysisPage() {
       const reader = new FileReader();
       reader.onloadend = async () => {
         setUploadedImage(reader.result as string);
-        await sendToServer();
+        await sendToServer(file);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const sendToServer = async () => {
-    setTimeout(() => {
-      setAnalysisImage("/placeholder.svg?height=400&width=400");
-    }, 2000);
+  const sendToServer = async (file:File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    try{
+      const response = await fetch("https://ortho-vision-backend.onrender.com//upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const imageBlob = await response.blob();
+        const imageURL = URL.createObjectURL(imageBlob);
+        setAnalysisImage(imageURL);
+      } else {
+        console.error("Failed to upload image");
+      }
+    }catch(error){
+      console.error("Failed to upload image", error);
+    }
   };
 
   const triggerFileInput = () => fileInputRef.current?.click();

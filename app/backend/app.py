@@ -21,6 +21,8 @@ app.config.from_object(Config)
 app.register_blueprint(patient_blueprint)
 app.register_blueprint(auth_blueprint)
 
+CORS(auth_blueprint)
+CORS(patient_blueprint)
 
 @app.route('/')
 def hello_world():

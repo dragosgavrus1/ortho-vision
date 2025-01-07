@@ -56,6 +56,7 @@ def signup():
             return jsonify({
                 "message": "User created and logged in successfully",
                 "token": token,
+                "user_id": user_id,
             }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -98,6 +99,7 @@ def signin():
                 return jsonify({
                     "message": "Login successful",
                     "token": token,
+                    "user_id": user_id,
                 }), 200
             else:
                 return jsonify({"error": "Failed to retrieve user data from database"}), 500

@@ -17,6 +17,7 @@ def create_radiograph():
 
     patient_id = request_data.get('patient_id')
     url = request_data.get('url')
+    date = request_data.get('date')
 
     if not patient_id or not url:
         return jsonify({"error": "Missing required fields"}), 400

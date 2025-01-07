@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from supabase import create_client, Client
 
 
-radiograph_blueprint = Blueprint('patient', __name__)
+radiograph_blueprint = Blueprint('radiograph', __name__)
 
 # Function to get Supabase client
 def get_supabase_client():

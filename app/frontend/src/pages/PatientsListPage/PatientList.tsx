@@ -1,6 +1,7 @@
 "use client";
 
 import { Layout } from "@/components/Layout";
+import AddPatientDialog from "@/components/PatientDialog/AddPatientDialog";
 import { patientSidebarLinks } from "@/constants/links";
 import { useRepo } from "@/data/repo/Context";
 import isTokenValid from "@/hooks/tokenValid";
@@ -12,7 +13,7 @@ import {
   Trash2,
   User2Icon,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
@@ -20,6 +21,7 @@ import { Input } from "../../components/Input/Input";
 export default function PatientList() {
   const navigate = useNavigate();
   const { patients, fetchPatients } = useRepo();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchPatients();
@@ -32,6 +34,13 @@ export default function PatientList() {
       navigate("/signin"); // Redirect to Sign In page if the user is not logged in
     }
   }, [navigate]);
+  const handleAddPatient = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
 
   return (
     <Layout activePath="/patients" links={patientSidebarLinks}>
@@ -49,7 +58,7 @@ export default function PatientList() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
             <Input placeholder="Search Patients" className="pl-8" />
           </div>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleAddPatient}>
             <Plus className="h-4 w-4" />
             Add Patient
           </Button>
@@ -101,6 +110,7 @@ export default function PatientList() {
           </Button>
         </div>
       </footer>
+      {isDialogOpen && <AddPatientDialog onClose={handleDialogClose} />}
     </Layout>
   );
 }

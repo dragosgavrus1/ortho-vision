@@ -9,7 +9,7 @@ from ultralytics import YOLO
 from config import Config
 from routes.patient_routes import patient_blueprint
 from routes.auth_routes import auth_blueprint
-
+from routes.radiograph_routes import radiograph_blueprint
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)#, resources={r"/*": {"origins": ["http://127.0.0.1:3000"]}})
@@ -21,6 +21,7 @@ app.config.from_object(Config)
 # Import blueprints
 app.register_blueprint(patient_blueprint)
 app.register_blueprint(auth_blueprint)
+app.register_blueprint(radiograph_blueprint)
 
 CORS(app)
 

@@ -1,6 +1,6 @@
 interface Patient {
   id: number;
-  user_id: number;
+  user_id: string;
   fullname: string;
   email: string;
   phone: string;

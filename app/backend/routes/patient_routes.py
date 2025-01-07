@@ -15,21 +15,20 @@ def get_supabase_client():
 def create_patient():
     request_data = request.get_json()
 
-    first_name = request_data.get('first_name')
-    last_name = request_data.get('last_name')
-    dob = request_data.get('date_of_birth')
+    full_name = request_data.get('fullname')
+    dob = request_data.get('dob')
     gender = request_data.get('gender')
     email = request_data.get('email')
     user_id = request_data.get('user_id')
 
-    if not first_name or not last_name or not dob or not gender or not email or not user_id:
+    
+    if not full_name or not dob or not gender or not email or not user_id:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
         supabase = get_supabase_client()
         response = supabase.table('Patients').insert({
-            "first_name": first_name,
-            "last_name": last_name,
+            "fullname": full_name,
             "date_of_birth": dob,
             "gender": gender,
             "email": email,

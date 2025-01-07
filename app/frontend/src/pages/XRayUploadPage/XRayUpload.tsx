@@ -46,12 +46,11 @@ export default function AnalysisPage() {
 
   const handleSaveXRay = async () => {
     try {
+      console.log("Analysis Image:", analysisImage);
+      handleDownloadImage(analysisImage);
       const response = await fetch("http://127.0.0.1:5000/radiographs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-        },
+
         body: JSON.stringify({
           patient_id: id,
           image_url: analysisImage,
@@ -65,6 +64,17 @@ export default function AnalysisPage() {
     } catch (error) {
       console.error("Failed to save x-ray", error);
     }
+  };
+  const handleDownloadImage = (imageUrl: string | null) => {
+    if (!imageUrl) {
+      alert("No image available to download!");
+      return;
+    }
+    // Create an anchor element dynamically
+    const link = document.createElement("a");
+    link.href = imageUrl; // Set the image URL
+    link.download = "analysis-image.png"; // Default filename for the download
+    link.click(); // Trigger the download
   };
 
   const handleImageUpload = async (
@@ -85,15 +95,15 @@ export default function AnalysisPage() {
     setIsLoading(true); // Start loading
     const formData = new FormData();
     formData.append("file", file);
+    console.log("File:", file);
     try {
       const response = await fetch("http://127.0.0.1:5000/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+
         body: formData,
       });
 
+      console.log("Response:", response);
       if (response.ok) {
         const imageBlob = await response.blob();
         const imageURL = URL.createObjectURL(imageBlob);

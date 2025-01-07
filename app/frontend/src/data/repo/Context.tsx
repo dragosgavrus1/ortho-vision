@@ -50,17 +50,18 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Add an Patient
-  const addPatient = async (Patient: Omit<Patient, "id">) => {
+  const addPatient = async (patient: Omit<Patient, "id">) => {
     try {
       const response = await fetch("http://localhost:5000/patients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Patient),
+        body: JSON.stringify(patient),
       });
       if (!response.ok) {
         throw new Error("Failed to add Patient.");
       }
-      console.log("[DEBUG] Patient added:", Patient);
+
+      console.log("[DEBUG] Patient added:", patient);
     } catch (error: any) {
       console.error("[ERROR] Add Patient:", error.message);
     }

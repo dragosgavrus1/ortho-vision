@@ -56,7 +56,7 @@ def get_patients():
     try:
         #TODO: Fetch patients by user_id; Now all are fetched
         supabase = get_supabase_client()
-        response = supabase.table('Patients').select('*').execute()
+        response = supabase.table('Patients').select('*').eq("user_id", user_id).execute()
 
         if not response.data:
             return jsonify({"error": "Failed to fetch patients"}), 400

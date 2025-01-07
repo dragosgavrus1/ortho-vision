@@ -12,7 +12,7 @@ from routes.auth_routes import auth_blueprint
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.onrender.com"]}})
+
 
 # Load secret keys from environment variables
 app.config.from_object(Config)
@@ -21,8 +21,7 @@ app.config.from_object(Config)
 app.register_blueprint(patient_blueprint)
 app.register_blueprint(auth_blueprint)
 
-CORS(auth_blueprint)
-CORS(patient_blueprint)
+CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.onrender.com"]}})
 
 @app.route('/')
 def hello_world():

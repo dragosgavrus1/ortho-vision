@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Patient from "../models/Patient";
@@ -18,7 +19,13 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchPatients = async () => {
     try {
-      const response = await fetch("http://localhost:5000/patients");
+      const response = await fetch("http://localhost:5000/patients", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(localStorage.getItem("user_id")),
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch Patients.");
       }

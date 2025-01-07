@@ -74,6 +74,7 @@ const SignInSignUp = () => {
 
         // Store the JWT token in localStorage
         localStorage.setItem("jwtToken", data.token);
+        localStorage.setItem("userID", JSON.stringify(data.user_id));
 
         // Redirect to the dashboard or home page after successful sign-in
         navigate("/patients");

@@ -21,7 +21,7 @@ app.config.from_object(Config)
 app.register_blueprint(patient_blueprint)
 app.register_blueprint(auth_blueprint)
 
-CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.onrender.com"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}})
 
 @app.route('/')
 def hello_world():

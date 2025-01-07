@@ -1,11 +1,12 @@
 import "./App.css";
-import AppRouter from './router';
+import { RepoProvider } from "./data/repo/Context";
+import AppRouter from "./router";
 
 function App() {
   return (
-    <>
-    <AppRouter />
-    </>
+    <RepoProvider>
+      <AppRouter />
+    </RepoProvider>
   );
 }
 

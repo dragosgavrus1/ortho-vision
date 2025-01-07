@@ -63,16 +63,13 @@ export default function AnalysisPage() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await fetch(
-        "http://127.0.0.1:5000/upload",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch("http://127.0.0.1:5000/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+        body: formData,
+      });
 
       if (response.ok) {
         const imageBlob = await response.blob();

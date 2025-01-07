@@ -2,6 +2,7 @@
 
 import { Layout } from "@/components/Layout";
 import { patientSidebarLinks } from "@/constants/links";
+import { useRepo } from "@/data/repo/Context";
 import isTokenValid from "@/hooks/tokenValid";
 import {
   ArrowUpDown,
@@ -16,20 +17,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 
-const patients = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    contact: "123-456-7890",
-    photoUrl: "https://example.com/john.jpg",
-    age: 30,
-    gender: "Male",
-  },
-];
-
 export default function PatientList() {
   const navigate = useNavigate();
+  const { patients } = useRepo();
 
   // Redirect to Sign In page if not logged in
   useEffect(() => {
@@ -65,11 +55,11 @@ export default function PatientList() {
       <main className="flex-1 overflow-auto p-4">
         <div className="rounded-lg border bg-white">
           <div className="grid grid-cols-5 gap-4 border-b p-4 font-medium">
-            <div>Patient Photo</div>
-            <div>First Name</div>
-            <div>Last Name</div>
+            <div>Full Name</div>
+            <div>Email</div>
+            <div>Phone</div>
+            <div>Date of Birth</div>
             <div>Gender</div>
-            <div>Contact</div>
           </div>
           <div className="divide-y">
             {patients.map((patient) => (
@@ -79,16 +69,14 @@ export default function PatientList() {
                 onClick={() => navigate(`/patients/${patient.id}`)}
               >
                 <div>
-                  <img
-                    src={patient.photoUrl}
-                    alt={`${patient.firstName} ${patient.lastName}`}
-                    className="h-10 w-10 rounded-full bg-gray-100"
-                  />
+                  <div className="flex items-center">{patient.fullname}</div>
+                  <div className="flex items-center">{patient.email}</div>
+                  <div className="flex items-center">{patient.phone}</div>
+                  <div className="flex items-center">
+                    {patient.dob.toISOString()}
+                  </div>
+                  <div className="flex items-center">{patient.gender}</div>
                 </div>
-                <div className="flex items-center">{patient.firstName}</div>
-                <div className="flex items-center">{patient.lastName}</div>
-                <div className="flex items-center">{patient.gender}</div>
-                <div className="flex items-center">{patient.contact}</div>
               </div>
             ))}
           </div>

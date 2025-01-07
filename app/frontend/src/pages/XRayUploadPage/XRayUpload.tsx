@@ -44,6 +44,29 @@ export default function AnalysisPage() {
     }
   }, [navigate]);
 
+  const handleSaveXRay = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/radiographs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+        body: JSON.stringify({
+          patient_id: id,
+          image_url: analysisImage,
+          date: new Date().toISOString(),
+        }),
+      });
+
+      if (response.ok) {
+        alert("X-Ray saved successfully");
+      }
+    } catch (error) {
+      console.error("Failed to save x-ray", error);
+    }
+  };
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -223,12 +246,8 @@ export default function AnalysisPage() {
         </div>
         {/* Results Table */}
         <div className="text-center">
-          <Button
-            onClick={() => navigate(`/analysis-details/${id}`)}
-            variant="outline"
-            size="sm"
-          >
-            View Detailed Results
+          <Button onClick={() => handleSaveXRay()} variant="outline" size="sm">
+            Save X-Ray
           </Button>
         </div>
       </div>

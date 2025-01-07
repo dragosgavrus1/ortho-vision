@@ -27,6 +27,7 @@ def create_radiograph():
         response = supabase.table('Radiographs').insert({
             "patient_id": patient_id,
             "url": url,
+            "date": date,
         }).execute()
 
         if not response.data:

@@ -36,10 +36,10 @@ def create_patient():
             "user_id": user_id,
         }).execute()
 
-        if response.status_code == 201:
-            return jsonify({"message": "Patient created successfully", "data": response.data}), 201
-        else:
+        if not response.data:
             return jsonify({"error": "Failed to create patient"}), 400
+        return jsonify({"message": "Patient created successfully", "data": response.data}), 201
+
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -58,10 +58,9 @@ def get_patients():
         supabase = get_supabase_client()
         response = supabase.table('Patients').select('*').execute()
 
-        if response.status_code == 200:
-            return jsonify({"patients": response.data}), 200
-        else:
+        if not response.data:
             return jsonify({"error": "Failed to fetch patients"}), 400
+        return jsonify({"patients": response.data}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -74,10 +73,9 @@ def get_patient(patient_id):
         supabase = get_supabase_client()
         response = supabase.table('Patients').select('*').eq('patient_id', patient_id).single().execute()
 
-        if response.status_code == 200:
-            return jsonify({"patient": response.data}), 200
-        else:
+        if not response.data:
             return jsonify({"error": "Patient not found"}), 404
+        return jsonify({"patient": response.data}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -90,12 +88,11 @@ def update_patient(patient_id):
 
     first_name = request_data.get('first_name')
     last_name = request_data.get('last_name')
-    dob = request_data.get('dob')
+    dob = request_data.get('date_of_birth')
     gender = request_data.get('gender')
-    contact_number = request_data.get('contact_number')
     email = request_data.get('email')
 
-    if not first_name or not last_name or not dob or not gender or not contact_number or not email:
+    if not first_name or not last_name or not dob or not gender or not email:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
@@ -105,14 +102,12 @@ def update_patient(patient_id):
             "last_name": last_name,
             "dob": dob,
             "gender": gender,
-            "contact_number": contact_number,
             "email": email
         }).eq('patient_id', patient_id).execute()
 
-        if response.status_code == 200:
-            return jsonify({"message": "Patient updated successfully", "data": response.data}), 200
-        else:
+        if not response.data:
             return jsonify({"error": "Failed to update patient"}), 400
+        return jsonify({"message": "Patient updated successfully", "data": response.data}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -126,10 +121,9 @@ def delete_patient(patient_id):
         supabase = get_supabase_client()
         response = supabase.table('Patients').delete().eq('patient_id', patient_id).execute()
 
-        if response.status_code == 200:
-            return jsonify({"message": "Patient deleted successfully"}), 200
-        else:
+        if not response.data:
             return jsonify({"error": "Failed to delete patient"}), 400
+        return jsonify({"message": "Patient deleted successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

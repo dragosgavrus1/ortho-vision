@@ -34,6 +34,7 @@ def signup():
         })
 
         user = response.user
+        
         if user:
             user_id = user.id
             # Insert user info into the 'Users' table
@@ -81,10 +82,9 @@ def signin():
         })
 
         user = response.user
-
         if user:
             user_id = user.id
-            user_data = supabase.table('Users').select('fullname', 'role').eq('user_id', user.id).single().execute()
+            user_data = supabase.table('Users').select('fullname', 'role').eq('user_id', user_id).single().execute()
             if user_data.model_validate:
                 fullname = user_data.data.get('fullname')
                 role = user_data.data.get('role')

@@ -12,7 +12,7 @@ from routes.auth_routes import auth_blueprint
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": ["https://ortho-vision.onrender.com"]}})
 
 # Load secret keys from environment variables
 app.config.from_object(Config)
@@ -25,13 +25,6 @@ app.register_blueprint(auth_blueprint)
 @app.route('/')
 def hello_world():
     return 'Hello World!'
-
-@app.route('/test')
-def test_route():
-    return jsonify({
-        "SUPABASE_URL": app.config['SUPABASE_URL'],
-        "SUPABASE_KEY": app.config['SUPABASE_KEY']
-    })
 
 @app.route('/upload', methods=['POST'])
 def upload_image():

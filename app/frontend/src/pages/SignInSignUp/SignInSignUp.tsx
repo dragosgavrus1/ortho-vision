@@ -22,7 +22,7 @@ const SignInSignUp = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://ortho-vision-backend.onrender.com/signup", {
+      const response = await fetch("http://127.0.0.1:5000/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const SignInSignUp = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://ortho-vision-backend.onrender.com/signin", {
+      const response = await fetch("http://127.0.0.1:5000/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

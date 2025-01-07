@@ -19,8 +19,6 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   const [patients, setPatients] = useState<Patient[]>([]);
 
   const fetchPatients = async () => {
-    console.log("[DEBUG] Fetching Patients...");
-    console.log(localStorage.getItem("user_id"));
     try {
       const userId = localStorage.getItem("user_id") || "";
       console.log("[DEBUG] User ID:", userId);
@@ -32,9 +30,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
           "Content-Type": "application/json",
         },
       });
-
       const data = await response.json();
-      console.log("[DEBUG] Data:", data);
 
       if (Array.isArray(data.patients)) {
         const transformedPatients = data.patients.map((patient: any) => ({

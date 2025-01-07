@@ -85,7 +85,7 @@ def signin():
         user = response.user
         if user:
             user_id = user.id
-            user_data = supabase.table('Users').select('fullname', 'role').eq('user_id', user_id).single().execute()
+            user_data = supabase.table('Users').select('fullname', 'role', 'id').eq('user_id', user_id).single().execute()
             if user_data.model_validate:
                 fullname = user_data.data.get('fullname')
                 role = user_data.data.get('role')
@@ -99,7 +99,7 @@ def signin():
                 return jsonify({
                     "message": "Login successful",
                     "token": token,
-                    "user_id": user_id,
+                    "user_id": user_data.data.get('id'),
                 }), 200
             else:
                 return jsonify({"error": "Failed to retrieve user data from database"}), 500

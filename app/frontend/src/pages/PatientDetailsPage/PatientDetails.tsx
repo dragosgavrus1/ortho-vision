@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/Button/Button";
 import { Layout } from "@/components/Layout";
+import Patient from "@/data/models/Patient";
 import isTokenValid from "@/hooks/tokenValid";
 import {
   HistoryIcon,
@@ -12,43 +12,17 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-interface PatientDetails {
-  id: number;
-  firstName: string;
-  lastName: string;
-  age: number;
-  email: string;
-  phoneNumber: string;
-  address: string;
-  city: string;
-  medicalHistory: {
-    visitDate: string;
-    doctorName: string;
-    specialty: string;
-    notes: string;
-  }[];
-  surgeryHistory: {
-    date: string;
-    procedure: string;
-    surgeon: string;
-    hospital: string;
-  }[];
-  doctors: {
-    name: string;
-    specialization: string;
-    contactNumber: string;
-    yearsOfExperience: number;
-  }[];
-}
-
 export default function PatientDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [isChecked, setIsChecked] = useState(true); // Assuming it's checked by default
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked); // Update the state on change
-  };
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const patientAge = patient?.dob
+    ? Math.floor(
+        (Date.now() - patient.dob.getTime()) / (1000 * 60 * 60 * 24 * 365)
+      )
+    : 0;
+
   const patientDetailsLinks = [
     {
       href: "/patients",
@@ -63,47 +37,46 @@ export default function PatientDetailsPage() {
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
     { href: "/history", icon: HistoryIcon, label: "History" },
   ];
+  const fetchPatient = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5000/patients/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const [patient] = useState<PatientDetails>({
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    age: 45,
-    email: "john.doe@example.com",
-    phoneNumber: "123-456-7890",
-    address: "123 Main St",
-    city: "New York",
-    medicalHistory: [
-      {
-        visitDate: "2023-01-15",
-        doctorName: "Dr. Emily Carter",
-        specialty: "Cardiology",
-        notes: "Routine check-up",
-      },
-    ],
-    surgeryHistory: [
-      {
-        date: "2023-05-15",
-        procedure: "Appendectomy",
-        surgeon: "Dr. Smith",
-        hospital: "City Hospital",
-      },
-    ],
-    doctors: [
-      {
-        name: "Dr. Sarah Johnson",
-        specialization: "Pediatrics",
-        contactNumber: "123-456-7890",
-        yearsOfExperience: 10,
-      },
-    ],
-  });
+      const data = await response.json();
+
+      if (data.patient) {
+        const patient = {
+          id: data.patient.id,
+          user_id: data.patient.user_id,
+          fullname: data.patient.fullname,
+          email: data.patient.email,
+          phone: data.patient.phone,
+          dob: new Date(data.patient.date_of_birth), // Convert to Date object
+          gender: data.patient.gender,
+        };
+        setPatient(patient);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("[ERROR] Fetch Patient Error:", error.message);
+      } else {
+        console.error("[ERROR] Fetch Patient Error:", error);
+      }
+    }
+  };
 
   // Authentication check
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if (!isTokenValid(token)) {
       navigate("/signin");
+    }
+    if (id) {
+      fetchPatient(parseInt(id));
     }
   }, [navigate]);
 
@@ -119,14 +92,9 @@ export default function PatientDetailsPage() {
       </div>
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold">
-            {patient.firstName} {patient.lastName}
-          </h1>
+          <h1 className="text-2xl font-bold">{patient?.fullname}</h1>
           <span className="px-2 py-1 text-sm bg-gray-100 rounded-md">
-            Age: {patient.age}
-          </span>
-          <span className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded-md">
-            New
+            Age: {patientAge}
           </span>
         </div>
 
@@ -134,132 +102,27 @@ export default function PatientDetailsPage() {
           <h2 className="text-xl font-semibold mb-4">
             Patient Personal Information
           </h2>
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-2 text-left">Email</th>
-                  <th className="px-4 py-2 text-left">Phone Number</th>
-                  <th className="px-4 py-2 text-left">Address</th>
-                  <th className="px-4 py-2 text-left">City</th>
-                  <th className="px-4 py-2 text-left">Active</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="px-4 py-2">{patient.email}</td>
-                  <td className="px-4 py-2">{patient.phoneNumber}</td>
-                  <td className="px-4 py-2">{patient.address}</td>
-                  <td className="px-4 py-2">{patient.city}</td>
-                  <td className="px-4 py-2">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={handleCheckboxChange}
-                      className="rounded"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold mb-4">
-            Patient Medical History
-          </h2>
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-2 text-left">Visit Date</th>
-                  <th className="px-4 py-2 text-left">Doctor's Name</th>
-                  <th className="px-4 py-2 text-left">Specialty</th>
-                  <th className="px-4 py-2 text-left">Notes</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patient.medicalHistory.map((visit, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{visit.visitDate}</td>
-                    <td className="px-4 py-2">{visit.doctorName}</td>
-                    <td className="px-4 py-2">{visit.specialty}</td>
-                    <td className="px-4 py-2">{visit.notes}</td>
-                    <td className="px-4 py-2">
-                      <Button variant="secondary" size="sm">
-                        View Details
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Surgery History</h2>
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-2 text-left">Surgery Date</th>
-                  <th className="px-4 py-2 text-left">Procedure</th>
-                  <th className="px-4 py-2 text-left">Surgeon</th>
-                  <th className="px-4 py-2 text-left">Hospital</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patient.surgeryHistory.map((surgery, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{surgery.date}</td>
-                    <td className="px-4 py-2">{surgery.procedure}</td>
-                    <td className="px-4 py-2">{surgery.surgeon}</td>
-                    <td className="px-4 py-2">{surgery.hospital}</td>
-                    <td className="px-4 py-2">
-                      <Button variant="secondary" size="sm">
-                        View Details
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Doctors Information</h2>
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-2 text-left">Doctor Name</th>
-                  <th className="px-4 py-2 text-left">Specialization</th>
-                  <th className="px-4 py-2 text-left">Contact Number</th>
-                  <th className="px-4 py-2 text-left">Years of Experience</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patient.doctors.map((doctor, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{doctor.name}</td>
-                    <td className="px-4 py-2">{doctor.specialization}</td>
-                    <td className="px-4 py-2">{doctor.contactNumber}</td>
-                    <td className="px-4 py-2">{doctor.yearsOfExperience}</td>
-                    <td className="px-4 py-2">
-                      <Button variant="secondary" size="sm">
-                        View Details
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="rounded-lg border bg-white p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-gray-600">Full Name:</span>
+              <span>{patient?.fullname}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-gray-600">Email:</span>
+              <span>{patient?.email}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-gray-600">Phone Number:</span>
+              <span>{patient?.phone}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-gray-600">Date of Birth:</span>
+              <span>{patient?.dob.toISOString().split("T")[0]}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-gray-600">Gender:</span>
+              <span>{patient?.gender}</span>
+            </div>
           </div>
         </section>
       </div>

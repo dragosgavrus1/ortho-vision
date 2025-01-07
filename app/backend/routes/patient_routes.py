@@ -71,7 +71,7 @@ def get_patients():
 def get_patient(patient_id):
     try:
         supabase = get_supabase_client()
-        response = supabase.table('Patients').select('*').eq('patient_id', patient_id).single().execute()
+        response = supabase.table('Patients').select('*').eq('id', patient_id).single().execute()
 
         if not response.data:
             return jsonify({"error": "Patient not found"}), 404

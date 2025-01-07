@@ -14,6 +14,7 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 const HomePage = () => {
@@ -30,6 +31,13 @@ const HomePage = () => {
     localStorage.removeItem("user_id");
     navigate("/");
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      navigate("/patients");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">

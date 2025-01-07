@@ -19,7 +19,11 @@ import { Input } from "../../components/Input/Input";
 
 export default function PatientList() {
   const navigate = useNavigate();
-  const { patients } = useRepo();
+  const { patients, fetchPatients } = useRepo();
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
   // Redirect to Sign In page if not logged in
   useEffect(() => {

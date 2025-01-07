@@ -89,7 +89,7 @@ export default function AnalysisPage() {
       const response = await fetch("http://127.0.0.1:5000/upload", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
         },
         body: formData,
       });

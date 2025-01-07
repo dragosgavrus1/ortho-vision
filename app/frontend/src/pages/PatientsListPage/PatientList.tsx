@@ -68,15 +68,13 @@ export default function PatientList() {
                 className="grid grid-cols-5 gap-4 p-4 cursor-pointer hover:bg-gray-100"
                 onClick={() => navigate(`/patients/${patient.id}`)}
               >
-                <div>
-                  <div className="flex items-center">{patient.fullname}</div>
-                  <div className="flex items-center">{patient.email}</div>
-                  <div className="flex items-center">{patient.phone}</div>
-                  <div className="flex items-center">
-                    {patient.dob.toISOString()}
-                  </div>
-                  <div className="flex items-center">{patient.gender}</div>
+                <div className="flex items-center">{patient.fullname}</div>
+                <div className="flex items-center">{patient.email}</div>
+                <div className="flex items-center">{patient.phone}</div>
+                <div className="flex items-center">
+                  {patient.dob.toISOString().split("T")[0]}
                 </div>
+                <div className="flex items-center">{patient.gender}</div>
               </div>
             ))}
           </div>

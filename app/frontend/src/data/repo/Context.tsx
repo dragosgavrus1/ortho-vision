@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import Patient from "../models/Patient";
 type RepoContextType = {
   patients: Patient[];
@@ -8,6 +8,7 @@ type RepoContextType = {
   addPatient: (Patient: Omit<Patient, "id">) => Promise<void>;
   updatePatient: (Patient: Patient) => Promise<void>;
   deletePatient: (id: number) => Promise<void>;
+  fetchPatients: () => Promise<void>;
 };
 
 const RepoContext = createContext<RepoContextType | undefined>(undefined);
@@ -18,26 +19,40 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   const [patients, setPatients] = useState<Patient[]>([]);
 
   const fetchPatients = async () => {
+    console.log("[DEBUG] Fetching Patients...");
+    console.log(localStorage.getItem("user_id"));
     try {
-      const response = await fetch("http://localhost:5000/patients", {
+      const userId = localStorage.getItem("user_id") || "";
+      console.log("[DEBUG] User ID:", userId);
+      const params = new URLSearchParams({ user_id: userId });
+      const base_URL = "http://localhost:5000/patients";
+      const response = await fetch(`${base_URL}?${params}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(localStorage.getItem("user_id")),
       });
-      if (!response.ok) {
-        throw new Error("Failed to fetch Patients.");
-      }
+
       const data = await response.json();
-      setPatients(data);
+      console.log("[DEBUG] Data:", data);
+
+      if (Array.isArray(data.patients)) {
+        const transformedPatients = data.patients.map((patient: any) => ({
+          id: patient.id,
+          user_id: patient.user_id,
+          fullname: patient.fullname,
+          email: patient.email,
+          phone: patient.phone,
+          dob: new Date(patient.date_of_birth), // Convert to Date object
+          gender: patient.gender,
+        }));
+        setPatients(transformedPatients);
+      }
     } catch (error: any) {
       console.error("[ERROR] Fetch Patients:", error.message);
     }
   };
-  useEffect(() => {
-    fetchPatients();
-  });
+
   // Add an Patient
   const addPatient = async (Patient: Omit<Patient, "id">) => {
     try {
@@ -93,7 +108,13 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <RepoContext.Provider
-      value={{ patients, addPatient, updatePatient, deletePatient }}
+      value={{
+        patients,
+        addPatient,
+        updatePatient,
+        deletePatient,
+        fetchPatients,
+      }}
     >
       {children}
     </RepoContext.Provider>

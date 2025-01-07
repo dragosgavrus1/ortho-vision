@@ -27,6 +27,7 @@ const HomePage = () => {
   // Handle Log Out
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("user_id");
     navigate("/");
   };
 

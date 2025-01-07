@@ -1,6 +1,7 @@
 // src/pages/SignInSignUp.tsx
 
 import { Button } from "@/components/Button/Button";
+import { useRepo } from "@/data/repo/Context";
 import { Lock, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ import "./SignInSignUp.css";
 
 const SignInSignUp = () => {
   const navigate = useNavigate();
-
+  const { fetchPatients } = useRepo();
   // States for handling user input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,11 +72,11 @@ const SignInSignUp = () => {
 
       if (response.ok) {
         console.log("User signed in successfully", data);
-
+        console.log("User ID:", data.user_id);
         // Store the JWT token in localStorage
         localStorage.setItem("jwtToken", data.token);
-        localStorage.setItem("userID", JSON.stringify(data.user_id));
-
+        localStorage.setItem("user_id", JSON.stringify(data.user_id));
+        fetchPatients();
         // Redirect to the dashboard or home page after successful sign-in
         navigate("/patients");
       } else {

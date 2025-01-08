@@ -6,13 +6,6 @@ import { ArrowLeft, Edit2, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface Education {
-  year: string;
-  degree: string;
-  university: string;
-  certificate?: string;
-}
-
 interface UserProfile {
   name: string;
   role: string;

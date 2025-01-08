@@ -1,7 +1,7 @@
 // pages/HistoryList.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowUpDown, Search, User2Icon, LayoutDashboard, Info, Upload, History, LayoutDashboardIcon, InfoIcon, HistoryIcon } from 'lucide-react';
+import { ArrowUpDown, Search, User2Icon, Upload,  LayoutDashboardIcon, InfoIcon, HistoryIcon } from 'lucide-react';
 import isTokenValid from "@/hooks/tokenValid";
 import { Layout } from "@/components/Layout";
 import ImageDialog from "@/components/HistoryDialog/HistoryDialog";

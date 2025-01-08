@@ -15,66 +15,29 @@ interface Education {
 
 interface UserProfile {
   name: string;
-  title: string;
-  section: string;
+  role: string;
   personalInfo: {
-    employeeId: string;
     idNumber: string;
     phone: string;
     email: string;
     birthday: string;
     gender: string;
-    maritalStatus: string;
-    nationality: string;
   };
-  addressInfo: {
-    address: string;
-    country: string;
-    city: string;
-    hometown: string;
-    postalCode: string;
-  };
-  education: Education[];
 }
 
 export default function Profile() {
   const navigate = useNavigate();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const profile: UserProfile = {
-    name: "Elizabeth Lopez",
-    title: "Title",
-    section: "Section",
+    name: "Rares Dan Goia",
+    role: "Admin",
     personalInfo: {
-      employeeId: "A0001",
-      idNumber: "0001234567",
-      phone: "(719) 860-5684",
-      email: "elizabethlopez95@hotmail.com",
-      birthday: "May 15, 1995",
-      gender: "Female",
-      maritalStatus: "Single",
-      nationality: "USA",
-    },
-    addressInfo: {
-      address: "925 Wall Street",
-      country: "USA",
-      city: "Houston",
-      hometown: "-",
-      postalCode: "75204",
-    },
-    education: [
-      {
-        year: "2019",
-        degree: "Bachelor of Arts in Psychology",
-        university: "University of California, Berkeley",
-        certificate: "Certificate.pdf",
-      },
-      {
-        year: "2021",
-        degree: "Master of Science",
-        university: "Stanford University",
-        certificate: "Certificate.pdf",
-      },
-    ],
+      idNumber: "c806acff-649f-48c4-a990-867e7abf1ec3",
+      phone: "+40 747 709 718",
+      email: "goiararesdan@gmail.com.com",
+      birthday: "June 17, 2003",
+      gender: "Male",
+    }
   };
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
@@ -117,8 +80,7 @@ export default function Profile() {
           <div>
             <h1 className="text-2xl font-bold">{profile.name}</h1>
             <div className="flex gap-4 text-sm text-gray-600 mt-1">
-              <span>{profile.title}</span>
-              <span>{profile.section}</span>
+              <span>{profile.role}</span>
             </div>
           </div>
         </div>
@@ -135,12 +97,6 @@ export default function Profile() {
             <div className="grid gap-6 p-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4">
                 {/* Row 1 */}
-                <div className="flex items-center gap-2">
-                  <p className="w-40 text-sm text-gray-500">Employee ID</p>
-                  <p className="flex-1 break-words">
-                    {profile.personalInfo.employeeId}
-                  </p>
-                </div>
                 <div className="flex items-center gap-2">
                   <p className="w-40 text-sm text-gray-500">ID Number</p>
                   <p className="flex-1 break-words">
@@ -173,20 +129,6 @@ export default function Profile() {
                   <p className="w-40 text-sm text-gray-500">Gender</p>
                   <p className="flex-1 break-words">
                     {profile.personalInfo.gender}
-                  </p>
-                </div>
-
-                {/* Row 4 */}
-                <div className="flex items-center gap-2">
-                  <p className="w-40 text-sm text-gray-500">Marital Status</p>
-                  <p className="flex-1 break-words">
-                    {profile.personalInfo.maritalStatus}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="w-40 text-sm text-gray-500">Nationality</p>
-                  <p className="flex-1 break-words">
-                    {profile.personalInfo.nationality}
                   </p>
                 </div>
               </div>

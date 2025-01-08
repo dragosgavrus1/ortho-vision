@@ -35,7 +35,7 @@ export default function PatientDetailsPage() {
       label: "Patient Information",
     },
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
-    { href: "/history", icon: HistoryIcon, label: "History" },
+    { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
   ];
   const fetchPatient = async (id: number) => {
     try {

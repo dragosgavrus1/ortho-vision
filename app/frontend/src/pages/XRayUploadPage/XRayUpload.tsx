@@ -34,7 +34,7 @@ export default function AnalysisPage() {
     { href: "/patients", icon: LayoutDashboardIcon, label: "Overview" },
     { href: `/patients/${id}`, icon: InfoIcon, label: "Patient Information" },
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
-    { href: "/history", icon: HistoryIcon, label: "History" },
+    { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
   ];
 
   useEffect(() => {
@@ -70,11 +70,12 @@ export default function AnalysisPage() {
       alert("No image available to download!");
       return;
     }
+    alert("Radiograpgh saved successfully");
     // Create an anchor element dynamically
-    const link = document.createElement("a");
-    link.href = imageUrl; // Set the image URL
-    link.download = "analysis-image.png"; // Default filename for the download
-    link.click(); // Trigger the download
+    // const link = document.createElement("a");
+    // link.href = imageUrl; // Set the image URL
+    // link.download = "analysis-image.png"; // Default filename for the download
+    // link.click(); // Trigger the download
   };
 
   const handleImageUpload = async (

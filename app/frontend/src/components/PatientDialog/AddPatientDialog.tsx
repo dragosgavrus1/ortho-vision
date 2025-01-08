@@ -43,12 +43,14 @@ export default function AddPatientDialog({ onClose }: AddPatientDialogProps) {
           />
           <Input
             placeholder="Email"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Input
             placeholder="Phone"
             value={phone}
+            type="tel"
             onChange={(e) => setPhone(e.target.value)}
           />
           <Input
@@ -57,11 +59,18 @@ export default function AddPatientDialog({ onClose }: AddPatientDialogProps) {
             value={dob}
             onChange={(e) => setDob(e.target.value)}
           />
-          <Input
-            placeholder="Gender"
+          <select
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-          />
+          >
+            <option value="" disabled>
+              Select Gender
+            </option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>

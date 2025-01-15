@@ -91,6 +91,7 @@ def update_patient(patient_id):
     dob = request_data.get('dob')
     gender = request_data.get('gender')
     email = request_data.get('email')
+    print(request_data)
 
     if not full_name  or not dob or not gender or not email:
         return jsonify({"error": "Missing required fields"}), 400

@@ -108,7 +108,7 @@ export default function AnalysisPage() {
         const imageBlob = await response.blob();
         const imageURL = URL.createObjectURL(imageBlob);
         setAnalysisImage(imageURL);
-        const reportResponse = await fetch("http://127.0.0.1:5000/reports", {
+        const reportResponse = await fetch("http://127.0.0.1:5000/report", {
           method: "GET",
         });
 

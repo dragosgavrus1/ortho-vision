@@ -29,7 +29,7 @@ export default function AnalysisPage() {
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const [report, setReport] = useState({});
   const patientDetailsLinks = [
     { href: "/patients", icon: LayoutDashboardIcon, label: "Overview" },
     { href: `/patients/${id}`, icon: InfoIcon, label: "Patient Information" },
@@ -104,11 +104,19 @@ export default function AnalysisPage() {
         body: formData,
       });
 
-      console.log("Response:", response);
       if (response.ok) {
         const imageBlob = await response.blob();
         const imageURL = URL.createObjectURL(imageBlob);
         setAnalysisImage(imageURL);
+        const reportResponse = await fetch("http://127.0.0.1:5000/reports", {
+          method: "GET",
+        });
+
+        if (reportResponse.ok) {
+          const reportData = await reportResponse.json();
+          console.log("Report Data:", reportData);
+          setReport(reportData);
+        }
       } else {
         console.error("Failed to upload image");
       }
@@ -260,6 +268,35 @@ export default function AnalysisPage() {
           <Button onClick={() => handleSaveXRay()} variant="outline" size="sm">
             Save X-Ray
           </Button>
+        </div>
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-4">Tooth Anomalies Report</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr className="bg-gray-100 border-b">
+                  <th className="py-2 px-4 text-left font-semibold text-gray-600">
+                    Tooth
+                  </th>
+                  <th className="py-2 px-4 text-left font-semibold text-gray-600">
+                    Anomalies
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(report).map(([tooth, anomalies]) => (
+                  <tr key={tooth} className="border-b">
+                    <td className="py-2 px-4">{tooth}</td>
+                    <td className="py-2 px-4">
+                      {(anomalies as string[]).length > 0
+                        ? (anomalies as string[]).join(", ")
+                        : "No anomalies detected"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

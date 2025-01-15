@@ -9,6 +9,7 @@ type RepoContextType = {
   updatePatient: (Patient: Patient) => Promise<void>;
   deletePatient: (id: number) => Promise<void>;
   fetchPatients: () => Promise<void>;
+  getPatient: (id: number | undefined) => Promise<Patient | undefined>;
 };
 
 const RepoContext = createContext<RepoContextType | undefined>(undefined);
@@ -21,7 +22,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchPatients = async () => {
     try {
       const userId = localStorage.getItem("user_id") || "";
-      console.log("[DEBUG] User ID:", userId);
+
       const params = new URLSearchParams({ user_id: userId });
       const base_URL = "http://localhost:5000/patients";
       const response = await fetch(`${base_URL}?${params}`, {
@@ -70,6 +71,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   // Update an Patient
   const updatePatient = async (patient: Patient) => {
     try {
+      console.log("[DEBUG] Patient to update:", patient);
       const response = await fetch(
         `http://localhost:5000/patients/${patient.id}`,
         {
@@ -103,6 +105,35 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const getPatient = async (
+    id: number | undefined
+  ): Promise<Patient | undefined> => {
+    try {
+      const response = await fetch(`http://localhost:5000/patients/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data.patient) {
+        const patient = {
+          id: data.patient.id,
+          user_id: data.patient.user_id,
+          fullname: data.patient.fullname,
+          email: data.patient.email,
+          phone: data.patient.phone,
+          dob: new Date(data.patient.date_of_birth),
+          gender: data.gender,
+        };
+        return patient;
+      } else {
+        console.log("[ERROR] Patient not found:", id);
+      }
+    } catch (error: any) {
+      console.error("[ERROR] Get Patient:", error.message);
+    }
+  };
   return (
     <RepoContext.Provider
       value={{
@@ -111,6 +142,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
         updatePatient,
         deletePatient,
         fetchPatients,
+        getPatient,
       }}
     >
       {children}

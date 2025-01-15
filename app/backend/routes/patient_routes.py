@@ -14,7 +14,7 @@ def get_supabase_client():
 @patient_blueprint.route('/patients', methods=['POST'])
 def create_patient():
     request_data = request.get_json()
-
+    phone = request_data.get('phone')
     full_name = request_data.get('fullname')
     dob = request_data.get('dob')
     gender = request_data.get('gender')
@@ -22,7 +22,7 @@ def create_patient():
     user_id = request_data.get('user_id')
 
     
-    if not full_name or not dob or not gender or not email or not user_id:
+    if not full_name or not dob or not gender or not email or not user_id or not phone:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
@@ -31,6 +31,7 @@ def create_patient():
             "fullname": full_name,
             "date_of_birth": dob,
             "gender": gender,
+            "phone": phone,
             "email": email,
             "user_id": user_id,
         }).execute()
@@ -85,24 +86,24 @@ def get_patient(patient_id):
 def update_patient(patient_id):
     request_data = request.get_json()
 
-    first_name = request_data.get('first_name')
-    last_name = request_data.get('last_name')
-    dob = request_data.get('date_of_birth')
+    full_name = request_data.get('fullname')
+    phone = request_data.get('phone')
+    dob = request_data.get('dob')
     gender = request_data.get('gender')
     email = request_data.get('email')
 
-    if not first_name or not last_name or not dob or not gender or not email:
+    if not full_name  or not dob or not gender or not email:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
         supabase = get_supabase_client()
         response = supabase.table('Patients').update({
-            "first_name": first_name,
-            "last_name": last_name,
-            "dob": dob,
+            "fullname": full_name,
+            "date_of_birth": dob,
             "gender": gender,
+            "phone": phone,
             "email": email
-        }).eq('patient_id', patient_id).execute()
+        }).eq('id', patient_id).execute()
 
         if not response.data:
             return jsonify({"error": "Failed to update patient"}), 400
@@ -118,7 +119,7 @@ def delete_patient(patient_id):
     try:
         # Delete the patient record by patient_id
         supabase = get_supabase_client()
-        response = supabase.table('Patients').delete().eq('patient_id', patient_id).execute()
+        response = supabase.table('Patients').delete().eq('id', patient_id).execute()
 
         if not response.data:
             return jsonify({"error": "Failed to delete patient"}), 400

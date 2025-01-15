@@ -5,6 +5,7 @@ import PatientList from "./pages/PatientsListPage/PatientList";
 import Profile from "./pages/Profile/Profile";
 import SignInSignUp from "./pages/SignInSignUp/SignInSignUp";
 import AnalysisPage from "./pages/XRayUploadPage/XRayUpload";
+import HistoryList from "./pages/PatientHistoryPage/PatientHistory";
 
 const AppRouter = () => {
   return (
@@ -16,6 +17,7 @@ const AppRouter = () => {
         <Route path="/patients/:id" element={<PatientDetails />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/add-xray/:id" element={<AnalysisPage />} />
+        <Route path="/history/:id" element={<HistoryList />} />
       </Routes>
     </BrowserRouter>
   );

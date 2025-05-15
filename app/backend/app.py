@@ -63,7 +63,7 @@ def upload_image():
 
         # Prepare to draw bounding boxes
         annotated_image = decoded_image.copy()
-        report_data = {i: [] for i in range(1, 33)}  # Initialize report with all 32 teeth
+        report_data = {i: [] for i in range(1, 33)}  # Initialize report with all 342 teeth
 
         # Process teeth detections
         teeth_boxes = []

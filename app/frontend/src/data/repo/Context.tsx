@@ -10,6 +10,8 @@ type RepoContextType = {
   deletePatient: (id: number) => Promise<void>;
   fetchPatients: () => Promise<void>;
   getPatient: (id: number | undefined) => Promise<Patient | undefined>;
+  getUserInfo: (userId: number) => Promise<any>;
+  updateUser: (user: { id: string; fullname: string }) => Promise<void>;
 };
 
 const RepoContext = createContext<RepoContextType | undefined>(undefined);
@@ -124,7 +126,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
           email: data.patient.email,
           phone: data.patient.phone,
           dob: new Date(data.patient.date_of_birth),
-          gender: data.gender,
+          gender: data.patient.gender,
         };
         return patient;
       } else {
@@ -134,6 +136,41 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("[ERROR] Get Patient:", error.message);
     }
   };
+  const getUserInfo = async (userId: number) => {
+    const response = await fetch("http://localhost:5000/get_user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user_id: userId }),
+    });
+  
+    const data = await response.json();
+    if (data.user) {
+      return data.user;
+    } else {
+      console.error("Error fetching user:", data.error);
+      return null;
+    }
+  };
+
+  // Add updateUser API for doctor name change
+  const updateUser = async (user: { id: string; fullname: string }) => {
+    try {
+      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullname: user.fullname }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update user.");
+      }
+      console.log("[DEBUG] User updated:", user);
+    } catch (error: any) {
+      console.error("[ERROR] Update User:", error.message);
+    }
+  };
+
   return (
     <RepoContext.Provider
       value={{
@@ -143,6 +180,8 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
         deletePatient,
         fetchPatients,
         getPatient,
+        getUserInfo,
+        updateUser,
       }}
     >
       {children}

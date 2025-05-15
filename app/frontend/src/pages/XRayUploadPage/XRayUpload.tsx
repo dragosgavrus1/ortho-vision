@@ -21,6 +21,7 @@ export default function AnalysisPage() {
   const [analysisImage, setAnalysisImage] = useState<string | null>(
     "https://media.istockphoto.com/id/171294275/photo/panoramic-dental-x-ray.jpg?s=612x612&w=0&k=20&c=cKxtL1W0L2LKVoZnNfiUj8umm6kQDonINuhn8NdCda4="
   );
+  const [analysisBlob, setAnalysisBlob] = useState<Blob | null>(null);
   const [zoomScales, setZoomScales] = useState({ original: 1, analysis: 1 });
   const [selectedImage, setSelectedImage] = useState<"original" | "analysis">(
     "original"
@@ -46,36 +47,46 @@ export default function AnalysisPage() {
 
   const handleSaveXRay = async () => {
     try {
-      console.log("Analysis Image:", analysisImage);
-      handleDownloadImage(analysisImage);
+      if (!analysisBlob) {
+        alert("No analysis image available to save.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("patient_id", id ?? "");
+      formData.append("date", new Date().toISOString());
+      formData.append("report", JSON.stringify(report));
+      formData.append("image", analysisBlob, "analysis-image.png"); // Attach the binary image
+      console.log("Form Data:", formData);
+      
       const response = await fetch("http://127.0.0.1:5000/radiographs", {
         method: "POST",
-
-        body: JSON.stringify({
-          patient_id: id,
-          image_url: analysisImage,
-          date: new Date().toISOString(),
-        }),
+        body: formData,
       });
 
       if (response.ok) {
         alert("X-Ray saved successfully");
       }
+      else {
+        const errorData = await response.json();
+        console.error("Failed to save X-Ray:", errorData.error);
+        alert("Failed to save X-Ray.");
+      }
     } catch (error) {
-      console.error("Failed to save x-ray", error);
+      console.error("Error saving X-Ray:", error);
+      alert("An error occurred while saving the X-Ray.");
     }
   };
-  const handleDownloadImage = (imageUrl: string | null) => {
-    if (!imageUrl) {
-      alert("No image available to download!");
+  const handleSaveXRayToImage = () => {
+    if (!analysisImage) {
+      alert("No analysis image available to download!");
       return;
     }
-    alert("Radiograpgh saved successfully");
-    // Create an anchor element dynamically
-    // const link = document.createElement("a");
-    // link.href = imageUrl; // Set the image URL
-    // link.download = "analysis-image.png"; // Default filename for the download
-    // link.click(); // Trigger the download
+
+    const link = document.createElement("a");
+    link.href = analysisImage;
+    link.download = "analysis-image.png";
+    link.click();
   };
 
   const handleImageUpload = async (
@@ -108,6 +119,7 @@ export default function AnalysisPage() {
         const imageBlob = await response.blob();
         const imageURL = URL.createObjectURL(imageBlob);
         setAnalysisImage(imageURL);
+        setAnalysisBlob(imageBlob);
         const reportResponse = await fetch("http://127.0.0.1:5000/report", {
           method: "GET",
         });
@@ -265,8 +277,11 @@ export default function AnalysisPage() {
         </div>
         {/* Results Table */}
         <div className="text-center">
-          <Button onClick={() => handleSaveXRay()} variant="outline" size="sm">
+          <Button onClick={handleSaveXRay} variant="outline" size="sm">
             Save X-Ray
+          </Button>
+          <Button onClick={handleSaveXRayToImage} variant="outline" size="sm">
+            Save X-Ray to Image
           </Button>
         </div>
         <div className="mt-6">

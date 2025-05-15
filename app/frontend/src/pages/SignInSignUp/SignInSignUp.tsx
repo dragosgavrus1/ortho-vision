@@ -16,6 +16,7 @@ const SignInSignUp = () => {
   const [fullname, setFullname] = useState(""); // For SignUp only
   const [error, setError] = useState<string | null>(null);
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between SignIn and SignUp forms
+  const [isPatient, setIsPatient] = useState(false);
 
   // Handle Sign Up
   const handleSignUp = async (e: React.FormEvent) => {
@@ -32,6 +33,7 @@ const SignInSignUp = () => {
           email,
           password,
           fullname,
+          role: isPatient ? "patient" : "doctor", // <-- NEW: decide role based on checkbox
         }),
       });
 
@@ -76,10 +78,20 @@ const SignInSignUp = () => {
         // Store the JWT token in localStorage
         localStorage.setItem("jwtToken", data.token);
         localStorage.setItem("user_id", data.user_id);
-        fetchPatients();
-        // Redirect to the dashboard or home page after successful sign-in
-        navigate("/patients");
-      } else {
+        localStorage.setItem("role", data.role);
+        if (data.patient_id) {
+          localStorage.setItem("patient_id", data.patient_id);
+        }
+        
+        // Redirect based on user role
+        if (data.role === "patient") {
+          navigate("/overview");
+        } else {
+          fetchPatients();
+          navigate("/patients");
+        }
+      }
+      else {
         console.log("Signin failed", data.error);
         setError(data.error || "An error occurred during signin");
       }
@@ -153,6 +165,21 @@ const SignInSignUp = () => {
             />
           </div>
         </div>
+
+        {isSignUp && (
+          <div className="auth-input-group">
+            <label htmlFor="isPatient" className="auth-input-label">
+              <input
+                type="checkbox"
+                id="isPatient"
+                checked={isPatient}
+                onChange={(e) => setIsPatient(e.target.checked)}
+                className="mr-2"
+              />
+              Creating a Patient Account
+            </label>
+          </div>
+        )}
 
         <Button className="auth-submit-btn" type="submit">
           {isSignUp ? "Sign Up" : "Sign In"}

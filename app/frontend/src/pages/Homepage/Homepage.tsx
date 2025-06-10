@@ -14,7 +14,6 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 const HomePage = () => {

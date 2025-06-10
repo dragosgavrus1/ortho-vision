@@ -76,7 +76,7 @@ app/
 
 ## Usage
 
-1. Access the application at `http://localhost:3000` for the frontend and `http://localhost:5000` for the backend.
+1. Access the application at `http://127.0.0.1:3000` for the frontend and `http://127.0.0.1:5000` for the backend.
 2. Doctors can log in to manage patients, upload X-rays, and view reports.
 3. Patients can log in to view their history and interact with the chatbot.
 

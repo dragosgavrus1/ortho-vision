@@ -26,7 +26,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
       const userId = localStorage.getItem("user_id") || "";
 
       const params = new URLSearchParams({ user_id: userId });
-      const base_URL = "http://localhost:5000/patients";
+      const base_URL = "http://127.0.0.1:5000/patients";
       const response = await fetch(`${base_URL}?${params}`, {
         method: "GET",
         headers: {
@@ -55,7 +55,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   // Add an Patient
   const addPatient = async (patient: Omit<Patient, "id">) => {
     try {
-      const response = await fetch("http://localhost:5000/patients", {
+      const response = await fetch("http://127.0.0.1:5000/patients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patient),
@@ -75,7 +75,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       console.log("[DEBUG] Patient to update:", patient);
       const response = await fetch(
-        `http://localhost:5000/patients/${patient.id}`,
+        `http://127.0.0.1:5000/patients/${patient.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -93,7 +93,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deletePatient = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/patients/${id}`, {
+      const response = await fetch(`http://127.0.0.1:5000/patients/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -111,7 +111,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
     id: number | undefined
   ): Promise<Patient | undefined> => {
     try {
-      const response = await fetch(`http://localhost:5000/patients/${id}`, {
+      const response = await fetch(`http://127.0.0.1:5000/patients/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +137,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
   const getUserInfo = async (userId: number) => {
-    const response = await fetch("http://localhost:5000/get_user", {
+    const response = await fetch("http://127.0.0.1:5000/get_user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -157,7 +157,7 @@ export const RepoProvider: React.FC<{ children: React.ReactNode }> = ({
   // Add updateUser API for doctor name change
   const updateUser = async (user: { id: string; fullname: string }) => {
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
+      const response = await fetch(`http://127.0.0.1:5000/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullname: user.fullname }),

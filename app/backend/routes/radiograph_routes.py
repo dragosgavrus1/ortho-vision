@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
 from supabase import create_client, Client
-import requests
 import re
 
 radiograph_blueprint = Blueprint('radiograph', __name__)

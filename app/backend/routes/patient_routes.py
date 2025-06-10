@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from supabase import create_client, Client
+from supabase import create_client
 
 
 patient_blueprint = Blueprint('patient', __name__)

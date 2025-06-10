@@ -8,7 +8,7 @@ from ultralytics import YOLO
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from langchain_huggingface import HuggingFaceEmbeddings
-
+from sklearn.cluster import KMeans
 from config import Config
 from routes.patient_routes import patient_blueprint
 from routes.auth_routes import auth_blueprint
@@ -107,7 +107,6 @@ def upload_image():
                 teeth_boxes.append((x1, y1, x2, y2))
 
         # Cluster teeth: upper/lower
-        from sklearn.cluster import KMeans
         centers_y = np.array([[(y1 + y2) / 2] for (_, y1, _, y2) in teeth_boxes])
         kmeans = KMeans(n_clusters=2, random_state=0).fit(centers_y)
         labels = kmeans.labels_

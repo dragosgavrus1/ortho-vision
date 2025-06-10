@@ -29,15 +29,12 @@ const HomePage = () => {
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user_id");
+    localStorage.removeItem("role");
+    localStorage.removeItem("patient_id");
+    localStorage.removeItem("chatMessages");
     navigate("/");
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (token) {
-      navigate("/patients");
-    }
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -61,12 +58,10 @@ const HomePage = () => {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
-                    Revolutionary Dental AI Analysis
+                    Advanced Dental Anomaly Detection and AI Chatbot Assistance
                   </h1>
                   <p className="max-w-[600px] text-gray-600 md:text-xl dark:text-gray-300">
-                    Harness the power of AI to analyze X-rays and provide
-                    comprehensive implant recommendations with unparalleled
-                    accuracy.
+                    Utilize cutting-edge AI technology to detect dental anomalies in X-rays and receive instant assistance from our intelligent chatbot for treatment planning and patient communication.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -103,36 +98,33 @@ const HomePage = () => {
                 <CardHeader>
                   <Brain className="w-12 h-12 mb-4 text-blue-600 dark:text-blue-400" />
                   <CardTitle className="text-blue-600 dark:text-blue-400">
-                    AI-Powered Analysis
+                    AI-Powered Anomaly Detection
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Advanced machine learning algorithms analyze X-rays with high
-                  precision, identifying potential implant sites.
+                  Leverage advanced AI models to identify dental anomalies in X-rays with high precision.
                 </CardContent>
               </Card>
               <Card className="bg-white/50 backdrop-blur-sm dark:bg-gray-800/50 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <Zap className="w-12 h-12 mb-4 text-blue-600 dark:text-blue-400" />
                   <CardTitle className="text-blue-600 dark:text-blue-400">
-                    Instant Results
+                    Intelligent Chatbot Assistance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Receive comprehensive analysis and implant recommendations
-                  within seconds of uploading X-rays.
+                  Get instant support from our AI chatbot for treatment planning and patient communication.
                 </CardContent>
               </Card>
               <Card className="bg-white/50 backdrop-blur-sm dark:bg-gray-800/50 hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <ChartBar className="w-12 h-12 mb-4 text-blue-600 dark:text-blue-400" />
                   <CardTitle className="text-blue-600 dark:text-blue-400">
-                    Detailed Reporting
+                    Comprehensive Reporting
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  Generate in-depth reports with visualizations to support
-                  treatment planning and patient communication.
+                  Generate detailed reports with visualizations to enhance diagnostic accuracy and patient understanding.
                 </CardContent>
               </Card>
             </div>

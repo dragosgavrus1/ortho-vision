@@ -1,10 +1,12 @@
 // pages/HistoryList.tsx
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowUpDown, User2Icon, Upload,  LayoutDashboardIcon, InfoIcon, HistoryIcon, User, Settings } from 'lucide-react';
+import { ArrowUpDown, User2Icon, Upload,  LayoutDashboardIcon, InfoIcon, HistoryIcon, User  } from 'lucide-react';
 import isTokenValid from "@/hooks/tokenValid";
 import { Layout } from "@/components/Layout";
 import ImageDialog from "@/components/HistoryDialog/HistoryDialog";
+import ChatBubbleButton from "@/components/ChatBubbleButton";
+import ChatWindow from "@/components/ChatWindow";
 
 
 interface HistoryItem {
@@ -23,22 +25,23 @@ export default function HistoryList() {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [patientName, setPatientName] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>("desc");
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
+  const [radiographToDelete, setRadiographToDelete] = useState<string | null>(null);
 
   const { id } = useParams();
 
   const sidebarLinks = [
-    { href: "/patients", icon: LayoutDashboardIcon, label: "Overview" },
+    { href: "/patients", icon: LayoutDashboardIcon, label: "Patient List" },
     { href: `/patients/${id}`, icon: InfoIcon, label: "Patient Information" },
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
     { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
-    { href: "/settings", icon: Settings, label: "Settings" },
   ];
 
   const patientSidebarLinks = [
     { href: "/overview", icon: LayoutDashboardIcon, label: "Overview" },
     { href: "/profile", icon: User, label: "Profile" },
     { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
-    { href: "/settings", icon: Settings, label: "Settings" },
   ];
 
   // Determine user role (example: from localStorage)
@@ -84,7 +87,7 @@ export default function HistoryList() {
                 id: item.id,
                 date: item.date,
                 url: item.url,
-                report: item.report, // Replace with actual patient name if available
+                report: item.report,
               }))
             );
           } else {
@@ -123,6 +126,47 @@ export default function HistoryList() {
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
+  const handleOpenDetailsPage = (imageUrl: string, report: string) => {
+    navigate(`/history/${id}/details`, { state: { imageUrl, report } });
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setRadiographToDelete(id);
+    setShowDeleteConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (radiographToDelete) {
+        await handleDeleteRadiograph(radiographToDelete);
+        setRadiographToDelete(null);
+    }
+    setShowDeleteConfirmDialog(false);
+  };
+
+  const handleCancelDelete = () => {
+    setRadiographToDelete(null);
+    setShowDeleteConfirmDialog(false);
+  };
+
+  const handleDeleteRadiograph = async (id: string) => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/radiographs/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.ok) {
+            setHistoryItems((prev) => prev.filter((item) => item.id !== id));
+        } else {
+            console.error("Failed to delete radiograph:", await response.json());
+        }
+    } catch (error) {
+        console.error("Error deleting radiograph:", error);
+    }
+};
+
 return (
   <Layout activePath="/history" links={links}>
     <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
@@ -142,17 +186,18 @@ return (
 
     <main className="flex-1 overflow-auto p-4">
       <div className="rounded-lg border bg-white">
-        <div className="grid grid-cols-4 gap-4 border-b p-4 font-medium">
+        <div className={`grid ${role === "doctor" ? "grid-cols-5" : "grid-cols-4"} gap-4 border-b p-4 font-medium`}>
           <div>Preview</div>
           <div>Date</div>
           <div>Patient Name</div>
           <div>Actions</div>
+          {role === "doctor" && <div>Delete</div>}
         </div>
         <div className="divide-y">
           {sortedHistoryItems.map((item: HistoryItem) => (
             <div
               key={item.id}
-              className="grid grid-cols-4 gap-4 p-4 items-center"
+              className={`grid ${role === "doctor" ? "grid-cols-5" : "grid-cols-4"} gap-4 p-4 items-center`}
               onClick={() => handleOpenDialog(item.url, item.report)}
             >
               <div className="flex items-center">
@@ -169,11 +214,27 @@ return (
               <div className="flex items-center">
                 <button
                   className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                  onClick={() => console.log(`View details for ${item.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenDetailsPage(item.url, item.report);
+                  }}
                 >
                   View Details
                 </button>
               </div>
+              {role === "doctor" && (
+                <div className="flex items-center">
+                  <button
+                    className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(item.id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -195,6 +256,38 @@ return (
     {/* Display ImageDialog if needed */}
     {showDialog && selectedImage && selectedReport && (
       <ImageDialog src={selectedImage} report={selectedReport} onClose={handleCloseDialog} />
+    )}
+
+    {/* Chat Bubble Button */}
+    <ChatBubbleButton onClick={() => setIsChatOpen(!isChatOpen)} />
+
+    {/* Chat Window */}
+    {isChatOpen && <ChatWindow onClose={() => setIsChatOpen(false)} report={historyItems.map(item => item.report)} />}
+
+    {/* Confirmation Dialog for Deletion */}
+    {showDeleteConfirmDialog && (
+        <div className="confirmation-dialog-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="confirmation-dialog-content bg-white rounded-lg shadow-lg p-6 w-80">
+                <h2 className="text-lg font-semibold">Confirm Deletion</h2>
+                <p className="mt-2 text-gray-600">
+                    Are you sure you want to delete this radiograph?
+                </p>
+                <div className="mt-4 flex justify-end gap-2">
+                    <button
+                        className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                        onClick={handleCancelDelete}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                        onClick={handleConfirmDelete}
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
     )}
   </Layout>
 );

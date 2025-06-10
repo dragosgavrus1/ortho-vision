@@ -1,5 +1,5 @@
 import { Layout } from "@/components/Layout";
-import { LayoutDashboardIcon, Settings, User, HistoryIcon } from "lucide-react";
+import { LayoutDashboardIcon, User, HistoryIcon } from "lucide-react";
 import { useRepo } from "@/data/repo/Context";
 import isTokenValid from "@/hooks/tokenValid";
 import { User2Icon } from "lucide-react";
@@ -36,7 +36,6 @@ export default function PatientOverview() {
     { href: "/overview", icon: LayoutDashboardIcon, label: "Overview" },
     { href: "/profile", icon: User, label: "Profile" },
     { href: `/history/${patient.id}`, icon: HistoryIcon, label: "History" },
-      { href: "/settings", icon: Settings, label: "Settings" },
   ];
 
   return (

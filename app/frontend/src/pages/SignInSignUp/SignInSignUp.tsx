@@ -3,7 +3,7 @@
 import { Button } from "@/components/Button/Button";
 import { useRepo } from "@/data/repo/Context";
 import { Lock, UserIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignInSignUp.css";
 
@@ -17,6 +17,19 @@ const SignInSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between SignIn and SignUp forms
   const [isPatient, setIsPatient] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    const userRole = localStorage.getItem("role");
+
+    if (token) {
+      if (userRole === "patient") {
+        navigate("/overview");
+      } else if (userRole === "doctor") {
+        navigate("/patients");
+      }
+    }
+  }, []);
 
   // Handle Sign Up
   const handleSignUp = async (e: React.FormEvent) => {
@@ -79,6 +92,7 @@ const SignInSignUp = () => {
         localStorage.setItem("jwtToken", data.token);
         localStorage.setItem("user_id", data.user_id);
         localStorage.setItem("role", data.role);
+        localStorage.setItem("chatMessages", JSON.stringify([])); // Initialize chat messages
         if (data.patient_id) {
           localStorage.setItem("patient_id", data.patient_id);
         }

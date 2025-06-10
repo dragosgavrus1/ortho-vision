@@ -24,16 +24,8 @@ export default function PatientDetailsPage() {
     : 0;
 
   const patientDetailsLinks = [
-    {
-      href: "/patients",
-      icon: LayoutDashboardIcon,
-      label: "Overview",
-    },
-    {
-      href: `/patients/${id}`,
-      icon: InfoIcon,
-      label: "Patient Information",
-    },
+    { href: "/patients",icon: LayoutDashboardIcon,label: "Patient List",},
+    { href: `/patients/${id}`,icon: InfoIcon,label: "Patient Information",},
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
     { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
   ];

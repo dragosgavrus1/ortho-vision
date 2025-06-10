@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ReportTeethOverlay from "@/components/ReportTeethOverlay";
 
 export default function AnalysisPage() {
   const navigate = useNavigate();
@@ -31,8 +32,9 @@ export default function AnalysisPage() {
   const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [report, setReport] = useState({});
+  const [selectedTooth, setSelectedTooth] = useState<string | null>(null);
   const patientDetailsLinks = [
-    { href: "/patients", icon: LayoutDashboardIcon, label: "Overview" },
+    { href: "/patients", icon: LayoutDashboardIcon, label: "Patient List" },
     { href: `/patients/${id}`, icon: InfoIcon, label: "Patient Information" },
     { href: `/add-xray/${id}`, icon: Upload, label: "Add X-Ray" },
     { href: `/history/${id}`, icon: HistoryIcon, label: "History" },
@@ -284,34 +286,14 @@ export default function AnalysisPage() {
             Save X-Ray to Image
           </Button>
         </div>
+        {/* Tooth Anomalies Visualization */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-4">Tooth Anomalies Report</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr className="bg-gray-100 border-b">
-                  <th className="py-2 px-4 text-left font-semibold text-gray-600">
-                    Tooth
-                  </th>
-                  <th className="py-2 px-4 text-left font-semibold text-gray-600">
-                    Anomalies
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(report).map(([tooth, anomalies]) => (
-                  <tr key={tooth} className="border-b">
-                    <td className="py-2 px-4">{tooth}</td>
-                    <td className="py-2 px-4">
-                      {(anomalies as string[]).length > 0
-                        ? (anomalies as string[]).join(", ")
-                        : "No anomalies detected"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <h2 className="text-lg font-semibold mb-4">Tooth Anomalies Visualization</h2>
+          <ReportTeethOverlay
+            report={report}
+            selectedTooth={selectedTooth}
+            setSelectedTooth={setSelectedTooth}
+          />
         </div>
       </div>
 

@@ -78,3 +78,36 @@ def get_radiographs():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@radiograph_blueprint.route('/radiographs/<radiograph_id>', methods=['DELETE'])
+def delete_radiograph(radiograph_id):
+    try:
+        print(f"Deleting radiograph with ID: {radiograph_id}")
+        supabase = get_supabase_client()
+
+        # Fetch the radiograph metadata to get the file name
+        radiograph_response = supabase.table('Radiographs').select('*').eq('id', radiograph_id).execute()
+        if not radiograph_response.data:
+            return jsonify({"error": "Radiograph not found"}), 404
+
+        radiograph = radiograph_response.data[0]
+        file_url = radiograph['url']
+        file_name = file_url.split('/')[-1]  # Extract the file name from the URL
+        file_name = file_name.split('?')[0]  # Remove any query parameters if present
+        file_name = f"radiographs/{file_name}"  # Ensure the file name includes the storage path
+
+        print(f"Deleting image from Supabase storage: {file_name}")
+        storage_response = supabase.storage.from_('radiographs').remove([file_name])
+        if not storage_response:
+            return jsonify({"error": "Failed to delete image from storage"}), 500
+
+        # Delete the metadata from the Radiographs table
+        print("Deleting metadata from Supabase database")
+        db_response = supabase.table('Radiographs').delete().eq('id', radiograph_id).execute()
+        if not db_response.data:
+            return jsonify({"error": "Failed to delete radiograph metadata"}), 500
+
+        return jsonify({"message": "Radiograph deleted successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

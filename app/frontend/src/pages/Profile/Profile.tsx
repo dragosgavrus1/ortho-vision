@@ -91,6 +91,10 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("role");
+    localStorage.removeItem("patient_id");
+    localStorage.removeItem("chatMessages");
     navigate("/");
   };
 

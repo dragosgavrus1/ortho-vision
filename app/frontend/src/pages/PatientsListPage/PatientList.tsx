@@ -18,6 +18,7 @@ export default function PatientList() {
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
   const [patientId, setPatientId] = useState<number | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
 
   useEffect(() => {
     fetchPatients();
@@ -55,11 +56,20 @@ export default function PatientList() {
     );
   };
 
-  const handleDeleteSelected = async () => {
+  const handleDeleteClick = () => {
+    setShowDeleteConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
     for (const id of selectedPatients) {
       await deletePatient(id);
     }
     setSelectedPatients([]);
+    setShowDeleteConfirmDialog(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmDialog(false);
   };
 
   // Filter patients based on search term
@@ -164,7 +174,7 @@ export default function PatientList() {
             size="sm"
             className="gap-2"
             disabled={selectedPatients.length === 0}
-            onClick={handleDeleteSelected}
+            onClick={handleDeleteClick}
           >
             <Trash2 className="h-4 w-4" />
             Delete Selected
@@ -175,6 +185,31 @@ export default function PatientList() {
       {isAddDialogOpen && <AddPatientDialog onClose={handleDialogClose} />}
       {isEditDialogOpen && patientId !== undefined && (
         <EditPatientDialog onClose={handleDialogClose} id={patientId} />
+      )}
+
+      {showDeleteConfirmDialog && (
+        <div className="confirmation-dialog-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="confirmation-dialog-content bg-white rounded-lg shadow-lg p-6 w-80">
+            <h2 className="text-lg font-semibold">Confirm Deletion</h2>
+            <p className="mt-2 text-gray-600">
+              Are you sure you want to delete the selected patients?
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={handleCancelDelete}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </Layout>
   );

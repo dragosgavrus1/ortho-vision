@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request, send_file
 from huggingface_hub import InferenceClient
 from flask_cors import CORS
@@ -225,4 +226,5 @@ def chat():
     return jsonify({"response": completion.choices[0].message.content})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0',port=port,debug=True)

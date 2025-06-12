@@ -61,7 +61,7 @@ export default function AnalysisPage() {
       formData.append("image", analysisBlob, "analysis-image.png"); // Attach the binary image
       console.log("Form Data:", formData);
       
-      const response = await fetch("http://127.0.0.1:5000/radiographs", {
+      const response = await fetch("https://ortho-vision-backend.fly.dev//radiographs", {
         method: "POST",
         body: formData,
       });
@@ -111,7 +111,7 @@ export default function AnalysisPage() {
     formData.append("file", file);
     console.log("File:", file);
     try {
-      const response = await fetch("http://127.0.0.1:5000/upload", {
+      const response = await fetch("https://ortho-vision-backend.fly.dev//upload", {
         method: "POST",
 
         body: formData,
@@ -122,7 +122,7 @@ export default function AnalysisPage() {
         const imageURL = URL.createObjectURL(imageBlob);
         setAnalysisImage(imageURL);
         setAnalysisBlob(imageBlob);
-        const reportResponse = await fetch("http://127.0.0.1:5000/report", {
+        const reportResponse = await fetch("https://ortho-vision-backend.fly.dev//report", {
           method: "GET",
         });
 

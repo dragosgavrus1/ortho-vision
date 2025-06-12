@@ -57,7 +57,7 @@ export default function HistoryList() {
 
     const fetchPatientName = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/patients/${id}`, {
+        const response = await fetch(`https://ortho-vision-backend.fly.dev//patients/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include the JWT token
           },
@@ -75,7 +75,7 @@ export default function HistoryList() {
 
     const fetchHistoryItems = async () => {
         try {
-          const response = await fetch(`http://127.0.0.1:5000/radiographs?patient_id=${id}`, {
+          const response = await fetch(`https://ortho-vision-backend.fly.dev//radiographs?patient_id=${id}`, {
             headers: {
               Authorization: `Bearer ${token}`, // Include the JWT token
             },
@@ -151,7 +151,7 @@ export default function HistoryList() {
   const handleDeleteRadiograph = async (id: string) => {
     const token = localStorage.getItem("jwtToken");
     try {
-        const response = await fetch(`http://127.0.0.1:5000/radiographs/${id}`, {
+        const response = await fetch(`https://ortho-vision-backend.fly.dev//radiographs/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -37,7 +37,7 @@ const SignInSignUp = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/signup", {
+      const response = await fetch("https://ortho-vision-backend.fly.dev//signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const SignInSignUp = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/signin", {
+      const response = await fetch("https://ortho-vision-backend.fly.dev//signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -43,7 +43,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, report }) => {
 
     // Send the message to the backend
     try {
-      const response = await fetch("http://127.0.0.1:5000/chat", {
+      const response = await fetch("https://ortho-vision-backend.fly.dev//chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -31,7 +31,7 @@ export default function PatientDetailsPage() {
   ];
   const fetchPatient = async (id: number) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/patients/${id}`, {
+      const response = await fetch(`https://ortho-vision-backend.fly.dev//patients/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

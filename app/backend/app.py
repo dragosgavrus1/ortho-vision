@@ -33,8 +33,8 @@ CORS(app)
 report_data = None
 
 # Initialize Qdrant Client and Vector Store globally
-QDRANT_URL = "https://256bc441-1429-429e-9979-0c86a49d523e.eu-central-1-0.aws.cloud.qdrant.io:6333"
-QDRANT_API_KEY = "IpyGrMlAtVqguM1ki5Cj2AGq_H-MWPE5l3lRy4co5jx4SrufCwXG1Q"
+QDRANT_URL="https://dfdf5a90-1a7e-4a96-9e8a-0723845da287.eu-west-1-0.aws.cloud.qdrant.io:6333"
+QDRANT_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwiZXhwIjoxNzYwMDMzNzc3fQ.RUGoefw7AJemU1qH3BK6EhZsfaW3ZDaWmd9VraaDv6E"
 COLLECTION_NAME = "knowledge_base"
 HF_TOKEN = "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"
 MODEL = "deepseek-ai/DeepSeek-V3-0324"

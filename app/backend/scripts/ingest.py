@@ -64,10 +64,10 @@ def process_pdf(pdf_path, collection_name, qdrant_url, qdrant_api_key):
 
 # Example usage
 if __name__ == "__main__":
-    pdf_path = "C:/Users/drago/Desktop/Sem6/thesis/ortho-vision/srd_extracted_text.txt"
+    pdf_path = "C:/Users/drago/Desktop/Sem6/thesis/kb/srd_extracted_text.txt"
     collection_name = "knowledge_base"
-    qdrant_url = "https://256bc441-1429-429e-9979-0c86a49d523e.eu-central-1-0.aws.cloud.qdrant.io:6333"
-    qdrant_api_key = "IpyGrMlAtVqguM1ki5Cj2AGq_H-MWPE5l3lRy4co5jx4SrufCwXG1Q"
+    qdrant_url="https://dfdf5a90-1a7e-4a96-9e8a-0723845da287.eu-west-1-0.aws.cloud.qdrant.io:6333"
+    qdrant_api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwiZXhwIjoxNzYwMDMzNzc3fQ.RUGoefw7AJemU1qH3BK6EhZsfaW3ZDaWmd9VraaDv6E"
 
     result = process_pdf(pdf_path, collection_name, qdrant_url, qdrant_api_key)
     print(result)

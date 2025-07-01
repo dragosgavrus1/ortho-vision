@@ -36,7 +36,7 @@ report_data = None
 QDRANT_URL="https://dfdf5a90-1a7e-4a96-9e8a-0723845da287.eu-west-1-0.aws.cloud.qdrant.io:6333"
 QDRANT_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwiZXhwIjoxNzYwMDMzNzc3fQ.RUGoefw7AJemU1qH3BK6EhZsfaW3ZDaWmd9VraaDv6E"
 COLLECTION_NAME = "knowledge_base"
-HF_TOKEN = "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"
+HF_TOKEN = os.environ.get('HF_TOKEN')
 MODEL = "deepseek-ai/DeepSeek-V3-0324"
 
 client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
